@@ -7,8 +7,8 @@ export default function Navbar() {
   const [dropdown, setDropdown] = useState(false);
 
   return (
-    <header className="fixed w-full top-0 z-10 bg-transparent text-white px-7">
-      <nav className="max-w-7xl mx-auto flex items-center justify-between px-4 py-4">
+    <header className="fixed w-full top-0 z-30 bg-transparent text-white bg-[rgb(6,4,52)] bg-opacity-95">
+      <nav className=" flex items-center justify-between px-4 py-4 bg-[rgb(6,4,52)] bg-opacity-95 w-full h-16">
         {/* Logo */}
         <div className="text-xl font-bold">
           <img src={logo} alt="Logo" className="h-14 w-20" />
