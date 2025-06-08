@@ -1,14 +1,68 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const LoginBody = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    userName: "",
+    email: "",
+    password: "",
+  });
+  const navigate = useNavigate();
 
-  const toggleForm = () => setIsLogin((prev) => !prev);
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        "https://qurioans.onrender.com/qurioans/signin",
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
+      localStorage.setItem("QurioUser", res.data.userId);
+      alert(res.data.message);
+      navigate(`/verifyotp/${res.data.id}`);
+    } catch (error) {
+      alert(error?.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        "https://qurioans.onrender.com/qurioans/signup",
+        formData
+      );
+      alert(res.data.message);
+      navigate("/verifyotp/:userId");
+    } catch (error) {
+      alert(error?.response?.data?.message || "Signup failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleForm = () => {
+    setIsLogin((prev) => !prev);
+    setFormData({ userName: "", email: "", password: "" });
+  };
 
   return (
     <div className="mt-16 relative flex items-center justify-center sm:h-[90vh] h-[60vh] bg-black overflow-hidden">
-      {/* Video Background */}
+      {/* Background Video */}
       <video
         className="absolute top-0 left-0 w-full h-full object-cover"
         src="https://v1.pinimg.com/videos/mc/expMp4/33/16/fc/3316fceb96c4ac949ec7d67697e5338b_t1.mp4"
@@ -17,12 +71,17 @@ const LoginBody = () => {
         loop
         playsInline
       />
-
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
       {/* Form Container */}
       <div className="relative z-10 sm:h-[85vh] h-[55vh] bg-[#0a0a23cc] border border-pink-400 rounded-xl shadow-lg p-10 w-full max-w-md mx-4">
+        {/* Loader */}
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50 rounded-xl">
+            <div className="w-12 h-12 border-4 border-pink-400 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
+
         <p className="text-3xl font-bold text-pink-400 mb-8 text-center tracking-wide">
           {isLogin ? "Welcome Back" : "Create Account"}
         </p>
@@ -31,6 +90,7 @@ const LoginBody = () => {
           {isLogin ? (
             <motion.form
               key="login"
+              onSubmit={handleLogin}
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
@@ -39,17 +99,23 @@ const LoginBody = () => {
             >
               <input
                 type="email"
+                name="email"
                 placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
                 className="px-4 py-3 rounded-lg bg-transparent border border-pink-400 placeholder-pink-300 text-white focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
               <input
                 type="password"
+                name="password"
                 placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
                 className="px-4 py-3 rounded-lg bg-transparent border border-pink-400 placeholder-pink-300 text-white focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
               <button
                 type="submit"
-                className="bg-gradient-to-r from-pink-500 to-orange-400 hover:opacity-45 transition text-black font-semibold py-3 rounded-lg"
+                className="bg-gradient-to-r from-pink-500 to-orange-400 hover:opacity-45 transition text-white font-semibold py-3 rounded-lg"
               >
                 Login
               </button>
@@ -57,6 +123,7 @@ const LoginBody = () => {
           ) : (
             <motion.form
               key="signup"
+              onSubmit={handleSignup}
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
@@ -65,17 +132,26 @@ const LoginBody = () => {
             >
               <input
                 type="text"
+                name="userName"
                 placeholder="Username"
+                value={formData.userName}
+                onChange={handleChange}
                 className="px-4 py-3 rounded-lg bg-transparent border border-pink-400 placeholder-pink-300 text-white focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
               <input
                 type="email"
+                name="email"
                 placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
                 className="px-4 py-3 rounded-lg bg-transparent border border-pink-400 placeholder-pink-300 text-white focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
               <input
                 type="password"
+                name="password"
                 placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
                 className="px-4 py-3 rounded-lg bg-transparent border border-pink-400 placeholder-pink-300 text-white focus:outline-none focus:ring-2 focus:ring-pink-400"
               />
               <button

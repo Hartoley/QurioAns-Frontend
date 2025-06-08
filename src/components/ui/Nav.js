@@ -1,14 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import logo from "../../Images/cover-removebg-preview.png";
+import { useLocation } from "react-router-dom";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdown, setDropdown] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const location = useLocation();
+  const pathname = location.pathname;
+
+  // Check if QurioUser is in localStorage
+  useEffect(() => {
+    const user = localStorage.getItem("QurioUser");
+    if (user) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   return (
     <header className="fixed w-full top-0 z-30 bg-transparent text-white bg-[rgb(6,4,52)] bg-opacity-95">
-      <nav className=" flex items-center justify-between px-4 py-4 bg-[rgb(6,4,52)] bg-opacity-95 w-full h-16">
+      <nav className="flex items-center justify-between px-4 py-4 w-full h-16 bg-[rgb(6,4,52)] bg-opacity-95">
         {/* Logo */}
         <div className="text-xl font-bold">
           <img src={logo} alt="Logo" className="h-14 w-20" />
@@ -40,13 +52,22 @@ export default function Navbar() {
           </li>
           <li className="hover:text-purple-400 cursor-pointer">Fitness</li>
           <li className="hover:text-purple-400 cursor-pointer">Blog</li>
-          <li className="hover:text-purple-400 cursor-pointer">Sign in</li>
+
+          {!isLoggedIn && pathname !== "/login" && (
+            <li className="hover:text-purple-400 cursor-pointer">Sign in</li>
+          )}
         </ul>
 
-        {/* CTA Button */}
-        <button className="hidden md:block bg-gradient-to-r from-pink-500 to-orange-400  hover:opacity-45 text-white px-4 py-2 rounded-full text-sm font-semibold">
-          Get Started
-        </button>
+        {pathname !== "/signup" &&
+          (isLoggedIn ? (
+            <button className="hidden md:block bg-gradient-to-r from-pink-500 to-orange-400 hover:opacity-45 text-white px-4 py-2 rounded-full text-sm font-semibold">
+              Stories
+            </button>
+          ) : (
+            <button className="hidden md:block bg-gradient-to-r from-pink-500 to-orange-400 hover:opacity-45 text-white px-4 py-2 rounded-full text-sm font-semibold">
+              Get Started
+            </button>
+          ))}
 
         {/* Mobile Menu Icon */}
         <div className="md:hidden">
@@ -72,9 +93,12 @@ export default function Navbar() {
               {item}
             </div>
           ))}
-          <button className="w-full mt-2 bg-gradient-to-r from-pink-500 to-orange-400 text-white py-2 rounded-full text-sm font-semibold">
-            Online Earn
-          </button>
+
+          {!isLoggedIn && (
+            <button className="w-full mt-2 bg-gradient-to-r from-pink-500 to-orange-400 text-white py-2 rounded-full text-sm font-semibold">
+              Online Earn
+            </button>
+          )}
         </div>
       )}
     </header>
