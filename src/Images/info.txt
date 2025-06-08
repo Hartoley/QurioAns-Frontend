@@ -1,0 +1,14 @@
+
+Hope you enjoy your new logo, here are the people that
+made your beautiful logo happen :)
+font name: Fascinate-Regular
+font link: https://fonts.google.com/specimen/Fascinate
+font author: Astigmatic
+font author site: http://www.astigmatic.com/
+
+
+icon designer: joe shelton
+icon designer link: /creator/Ronnieq/
+        
+{"bg-gradient-0":"#920DE9","bg-gradient-1":"#1536F1","icon":"#ffffff","font":"#ffffff","slogan":"#ffffff"}
+      
