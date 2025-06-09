@@ -2,13 +2,19 @@ import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import logo from "../../Images/cover-removebg-preview.png";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdown, setDropdown] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const pathname = location.pathname;
+
+  const signin = async () => {
+    navigate("/login");
+  };
 
   // Check if QurioUser is in localStorage
   useEffect(() => {
@@ -60,11 +66,17 @@ export default function Navbar() {
 
         {pathname !== "/signup" &&
           (isLoggedIn ? (
-            <button className="hidden md:block bg-gradient-to-r from-pink-500 to-orange-400 hover:opacity-45 text-white px-4 py-2 rounded-full text-sm font-semibold">
+            <button
+              onClick={signin}
+              className="hidden md:block bg-gradient-to-r from-pink-500 to-orange-400 hover:opacity-45 text-white px-4 py-2 rounded-full text-sm font-semibold"
+            >
               Stories
             </button>
           ) : (
-            <button className="hidden md:block bg-gradient-to-r from-pink-500 to-orange-400 hover:opacity-45 text-white px-4 py-2 rounded-full text-sm font-semibold">
+            <button
+              onClick={signin}
+              className="hidden md:block bg-gradient-to-r from-pink-500 to-orange-400 hover:opacity-45 text-white px-4 py-2 rounded-full text-sm font-semibold"
+            >
               Get Started
             </button>
           ))}
