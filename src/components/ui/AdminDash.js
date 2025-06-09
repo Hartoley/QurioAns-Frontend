@@ -106,10 +106,13 @@ const AdminDash = () => {
         data.append("media", file);
       });
 
-      const res = await fetch(`http://localhost:5003/createblog/${adminId}`, {
-        method: "POST",
-        body: data,
-      });
+      const res = await fetch(
+        `https://qurioans.onrender.com/createblog/${adminId}`,
+        {
+          method: "POST",
+          body: data,
+        }
+      );
 
       if (!res.ok) {
         const errData = await res.json();
