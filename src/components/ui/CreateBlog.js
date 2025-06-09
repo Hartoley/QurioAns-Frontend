@@ -65,7 +65,6 @@ const CreateBlog = () => {
     setMediaFiles(Array.from(e.target.files));
   };
 
-  // ReactQuill modules for toolbar
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
@@ -87,7 +86,6 @@ const CreateBlog = () => {
       data.append("body", formData.body);
 
       selectedCategories.forEach((cat) => data.append("categories", cat));
-
       mediaFiles.forEach((file) => data.append("media", file));
 
       const res = await fetch(
@@ -116,10 +114,16 @@ const CreateBlog = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-full space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md space-y-6"
+    >
       {/* Title */}
       <div>
-        <label className="block font-medium mb-1" htmlFor="title">
+        <label
+          className="block text-gray-700 font-semibold mb-2"
+          htmlFor="title"
+        >
           Title <span className="text-red-600">*</span>
         </label>
         <input
@@ -129,13 +133,17 @@ const CreateBlog = () => {
           value={formData.title}
           onChange={handleInputChange}
           required
-          className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
+          placeholder="Enter your blog title"
+          className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600 transition"
         />
       </div>
 
       {/* Subtitle */}
       <div>
-        <label className="block font-medium mb-1" htmlFor="subtitle">
+        <label
+          className="block text-gray-700 font-semibold mb-2"
+          htmlFor="subtitle"
+        >
           Subtitle
         </label>
         <input
@@ -144,13 +152,17 @@ const CreateBlog = () => {
           name="subtitle"
           value={formData.subtitle}
           onChange={handleInputChange}
-          className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
+          placeholder="Optional subtitle"
+          className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600 transition"
         />
       </div>
 
       {/* Body with ReactQuill */}
       <div>
-        <label className="block font-medium mb-1" htmlFor="body">
+        <label
+          className="block text-gray-700 font-semibold mb-2"
+          htmlFor="body"
+        >
           Body <span className="text-red-600">*</span>
         </label>
         <ReactQuill
@@ -161,19 +173,27 @@ const CreateBlog = () => {
           }
           modules={modules}
           ref={quillRef}
-          style={{ minHeight: "200px" }}
           placeholder="Write your blog content here..."
+          style={{
+            minHeight: "200px",
+            maxHeight: "400px",
+            overflowY: "auto",
+            borderRadius: "0.375rem",
+          }}
+          className="mb-2"
         />
       </div>
 
       {/* Categories checkboxes */}
       <div>
-        <label className="block font-medium mb-2">Categories</label>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-48 overflow-y-auto border rounded p-3 bg-gray-50">
+        <label className="block text-gray-700 font-semibold mb-2">
+          Categories
+        </label>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-48 overflow-y-auto border border-gray-300 rounded-md p-4 bg-gray-50">
           {categoriesList.map((cat) => (
             <label
               key={cat}
-              className="flex items-center space-x-2 text-sm cursor-pointer"
+              className="flex items-center space-x-2 text-sm cursor-pointer hover:text-purple-700 transition"
             >
               <input
                 type="checkbox"
@@ -189,13 +209,15 @@ const CreateBlog = () => {
 
       {/* Media Upload */}
       <div>
-        <label className="block font-medium mb-2">Upload Media</label>
+        <label className="block text-gray-700 font-semibold mb-2">
+          Upload Media
+        </label>
         <input
           type="file"
           multiple
           accept="image/*,video/*"
           onChange={handleMediaChange}
-          className="block"
+          className="block border border-gray-300 rounded-md p-2 w-full text-gray-600"
         />
         {mediaFiles.length > 0 && (
           <div className="flex flex-wrap gap-3 mt-3">
@@ -206,14 +228,14 @@ const CreateBlog = () => {
                   key={idx}
                   src={url}
                   controls
-                  className="w-24 h-24 object-cover rounded border"
+                  className="w-12 h-12 object-cover rounded border"
                 />
               ) : (
                 <img
                   key={idx}
                   src={url}
                   alt="preview"
-                  className="w-24 h-24 object-cover rounded border"
+                  className="w-12 h-12 object-cover rounded border"
                 />
               );
             })}
@@ -224,9 +246,7 @@ const CreateBlog = () => {
       <button
         type="submit"
         disabled={submitting}
-        className={`w-30 px-3 bg-purple-600 text-white py-3 rounded font-semibold ${
-          submitting ? "opacity-50 cursor-not-allowed" : "hover:bg-purple-700"
-        }`}
+        className={`w-full sm:w-auto px-6 py-3 bg-purple-600 text-white rounded-md font-semibold transition hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed`}
       >
         {submitting ? "Creating..." : "Create Blog"}
       </button>
