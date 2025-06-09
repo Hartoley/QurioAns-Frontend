@@ -28,7 +28,7 @@ const AdminLogin = () => {
         password: formData.password,
       });
       alert(res.data.message);
-      localStorage.setItem("adminId", res.data.userId);
+      localStorage.setItem("adminId", res.data.id);
       navigate(`/admin/dashboard/${res.data.id}`);
     } catch (error) {
       alert(error?.response?.data?.message || "Login failed");

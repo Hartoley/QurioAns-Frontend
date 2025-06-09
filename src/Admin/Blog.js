@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Footer from "../components/ui/Footer";
 import DashNav from "../components/ui/DashNav";
 import { useParams, useNavigate } from "react-router-dom";
-
+import axios from "axios";
 const CATEGORY_OPTIONS = [
   "Technology",
   "Business",
@@ -48,6 +48,7 @@ const BlogEditor = () => {
   });
 
   const [loading, setLoading] = useState(true);
+  const [deleting, setdeleting] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
 
@@ -126,29 +127,35 @@ const BlogEditor = () => {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (event) => {
+    setdeleting(true);
+
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this blog?"
     );
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(
-        `http://localhost:5003/delete/${adminId}/${blogId}`,
-        {
-          method: "DELETE",
-        }
+      await axios.delete(
+        `https://qurioans.onrender.com/delete/${adminId}/${blogId}`
+      );
+      setTimeout(
+        () => (window.location.href = `/admin/dashboard/${adminId}`),
+        1500
       );
 
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.message || "Failed to delete blog");
-      }
+      setMessage("Blog deleted successfully!");
+      setdeleting(false);
 
-      // Remove the deleted blog from state
-      alert("Blog deleted successfully!");
+      setTimeout(
+        () => (window.location.href = "/admin/dashboard/${adminId}"),
+        1500
+      );
     } catch (err) {
-      alert("Error deleting blog: " + err.message);
+      setMessage(
+        `Delete failed: ${err.response?.data?.message || err.message}`
+      );
+      setdeleting(false);
     }
   };
 
@@ -332,12 +339,17 @@ const BlogEditor = () => {
           >
             Update Blog
           </button>
-          <button
-            onClick={() => handleDelete()}
-            className="mt-3 ml-4 text-sm text-red-600 hover:underline"
+          <p
+            onClick={handleDelete}
+            className={`mt-3 ml-4 text-sm ${
+              deleting
+                ? "text-gray-400 cursor-not-allowed"
+                : "text-red-600 hover:underline"
+            }`}
+            style={{ pointerEvents: deleting ? "none" : "auto" }}
           >
-            Delete
-          </button>
+            {loading ? "Deleting..." : "Delete"}
+          </p>
         </form>
       </div>
       <Footer />

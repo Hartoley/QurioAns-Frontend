@@ -30,10 +30,10 @@ const LoginBody = () => {
       );
       alert(res.data.message);
       if (res.data.role == "User") {
-        localStorage.setItem("QurioUser", res.data.userId);
+        localStorage.setItem("QurioUser", res.data.id);
         navigate(`/verifyotp/${res.data.id}`);
       } else if (res.data.role == "Admin") {
-        localStorage.setItem("adminId", res.data.userId);
+        localStorage.setItem("adminId", res.data.id);
         navigate(`/admin/dashboard${res.data.id}`);
       }
     } catch (error) {
