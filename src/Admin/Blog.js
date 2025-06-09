@@ -150,7 +150,7 @@ const BlogEditor = () => {
 
     try {
       const res = await fetch(
-        `http://localhost:5003/updateblog/${adminId}/${blogId}`,
+        `https://qurioans.onrender.com/updateblog/${adminId}/${blogId}`,
         { method: "PUT", body: data }
       );
 
