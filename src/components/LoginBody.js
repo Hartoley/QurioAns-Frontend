@@ -28,9 +28,14 @@ const LoginBody = () => {
           password: formData.password,
         }
       );
-      localStorage.setItem("QurioUser", res.data.userId);
       alert(res.data.message);
-      navigate(`/verifyotp/${res.data.id}`);
+      if (res.data.role == "User") {
+        localStorage.setItem("QurioUser", res.data.userId);
+        navigate(`/verifyotp/${res.data.id}`);
+      } else if (res.data.role == "Admin") {
+        localStorage.setItem("adminId", res.data.userId);
+        navigate(`/admin/dashboard${res.data.id}`);
+      }
     } catch (error) {
       alert(error?.response?.data?.message || "Login failed");
     } finally {

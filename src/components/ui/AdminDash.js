@@ -137,12 +137,20 @@ const AdminDash = () => {
     }
   };
 
-  if (loading) return <p className="text-center mt-10">Loading blogs...</p>;
   if (error)
     return (
       <p className="text-center mt-10 text-red-600 font-semibold">
         Error: {error}
       </p>
+    );
+
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-center mt-0 text-lg font-semibold">
+          Loading blogs...
+        </p>
+      </div>
     );
 
   return (

@@ -9,6 +9,7 @@ import UserDash from "./Users/UserDash";
 import AdminDash from "./components/ui/AdminDash";
 import Admin from "./Admin/Admin";
 import BlogEditor from "./Admin/Blog";
+import AdminLogin from "./Admin/AdminLogin";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<QurioAns />} />
         <Route path="/login" element={<Login />} />
+        <Route path="admin/login" element={<AdminLogin />} />
         <Route path="/dashboard/:userId" element={<UserDash />} />
         <Route path="/blog/:blogId" element={<BlogEditor />} />
         <Route path="/admin/dashboard/:adminId" element={<Admin />} />
