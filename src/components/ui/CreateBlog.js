@@ -116,7 +116,7 @@ const CreateBlog = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md space-y-6"
+      className="mt-20 max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md space-y-6"
     >
       {/* Title */}
       <div>
@@ -175,8 +175,8 @@ const CreateBlog = () => {
           ref={quillRef}
           placeholder="Write your blog content here..."
           style={{
-            minHeight: "200px",
-            maxHeight: "400px",
+            minHeight: "500px",
+            maxHeight: "800px",
             overflowY: "auto",
             borderRadius: "0.375rem",
           }}

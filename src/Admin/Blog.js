@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Footer from "../components/ui/Footer";
 import DashNav from "../components/ui/DashNav";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+
 const CATEGORY_OPTIONS = [
   "Technology",
   "Business",
@@ -36,9 +39,36 @@ const CATEGORY_OPTIONS = [
   "Gaming",
 ];
 
+const quillModules = {
+  toolbar: [
+    [{ header: [1, 2, 3, false] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ color: [] }, { background: [] }],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["link", "image", "video"],
+    ["clean"],
+  ],
+};
+
+const quillFormats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "color",
+  "background",
+  "list",
+  "bullet",
+  "link",
+  "image",
+  "video",
+];
+
 const BlogEditor = () => {
   const { blogId } = useParams();
   const adminId = localStorage.getItem("adminId");
+  const [updating, setUpdating] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -48,7 +78,7 @@ const BlogEditor = () => {
   });
 
   const [loading, setLoading] = useState(true);
-  const [deleting, setdeleting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
 
@@ -69,7 +99,11 @@ const BlogEditor = () => {
           title: data.title || "",
           subtitle: data.subtitle || "",
           body: data.body || "",
-          categories: data.categories || [],
+          categories: Array.isArray(data.categories)
+            ? data.categories
+            : typeof data.categories === "string"
+            ? data.categories.split(",").map((c) => c.trim())
+            : [],
         });
 
         setExistingMedia(data.image || []);
@@ -99,6 +133,7 @@ const BlogEditor = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    setUpdating(true);
     setMessage("Updating blog...");
 
     const data = new FormData();
@@ -107,6 +142,7 @@ const BlogEditor = () => {
     data.append("body", formData.body);
     data.append("imagesToKeep", JSON.stringify(mediaToKeep));
     data.append("categories", JSON.stringify(formData.categories));
+    console.log("Fetched categories:", formData.categories);
 
     newMedia.forEach((file) => {
       data.append("files", file);
@@ -114,22 +150,26 @@ const BlogEditor = () => {
 
     try {
       const res = await fetch(
-        `https://qurioans.onrender.com/updateblog/${adminId}/${blogId}`,
+        `http://localhost:5003/updateblog/${adminId}/${blogId}`,
         { method: "PUT", body: data }
       );
 
       if (!res.ok) throw new Error("Failed to update blog");
 
+      const result = await res.json(); // If the API returns JSON
       setMessage("Blog updated successfully!");
-      setTimeout(() => window.location.reload(), 1500);
+      alert("✅ Blog updated successfully!");
     } catch (err) {
-      setMessage(`Update failed: ${err.message}`);
+      const errorMessage = err.message || "An error occurred";
+      setMessage(`Update failed: ${errorMessage}`);
+      alert(`❌ Update failed: ${errorMessage}`);
+    } finally {
+      setUpdating(false);
     }
   };
 
-  const handleDelete = async (event) => {
-    setdeleting(true);
-
+  const handleDelete = async () => {
+    setDeleting(true);
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this blog?"
     );
@@ -139,23 +179,16 @@ const BlogEditor = () => {
       await axios.delete(
         `https://qurioans.onrender.com/delete/${adminId}/${blogId}`
       );
-      setTimeout(
-        () => (window.location.href = `/admin/dashboard/${adminId}`),
-        1500
-      );
-
       setMessage("Blog deleted successfully!");
-      setdeleting(false);
-
-      setTimeout(
-        () => (window.location.href = "/admin/dashboard/${adminId}"),
-        1500
-      );
+      setTimeout(() => {
+        window.location.href = `/admin/dashboard/${adminId}`;
+      }, 1500);
     } catch (err) {
       setMessage(
         `Delete failed: ${err.response?.data?.message || err.message}`
       );
-      setdeleting(false);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -221,16 +254,18 @@ const BlogEditor = () => {
 
           <div>
             <label className="block font-semibold mb-1">Body</label>
-            <textarea
-              name="body"
+            <ReactQuill
+              theme="snow"
               value={formData.body}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-md h-40"
-              required
-            ></textarea>
+              onChange={(value) =>
+                setFormData((prev) => ({ ...prev, body: value }))
+              }
+              modules={quillModules}
+              formats={quillFormats}
+              className="bg-white"
+            />
           </div>
 
-          {/* Category selection allowing multiple selection */}
           <div>
             <label className="block font-semibold mb-2">Category *</label>
             <div className="flex flex-wrap gap-2">
@@ -335,10 +370,38 @@ const BlogEditor = () => {
 
           <button
             type="submit"
-            className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-md shadow"
+            disabled={updating}
+            className={`${
+              updating
+                ? "bg-purple-300 cursor-not-allowed"
+                : "bg-purple-600 hover:bg-purple-700"
+            } text-white px-5 py-2 rounded-md shadow flex items-center justify-center gap-2`}
           >
-            Update Blog
+            {updating && (
+              <svg
+                className="animate-spin h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                ></path>
+              </svg>
+            )}
+            {updating ? "Updating..." : "Update Blog"}
           </button>
+
           <p
             onClick={handleDelete}
             className={`mt-3 ml-4 text-sm ${
@@ -348,7 +411,7 @@ const BlogEditor = () => {
             }`}
             style={{ pointerEvents: deleting ? "none" : "auto" }}
           >
-            {loading ? "Deleting..." : "Delete"}
+            {deleting ? "Deleting..." : "Delete"}
           </p>
         </form>
       </div>
