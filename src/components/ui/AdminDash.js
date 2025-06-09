@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const categoriesList = [
   "Technology",
@@ -56,7 +55,6 @@ const AdminDash = () => {
   const [mediaFiles, setMediaFiles] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
-  // Fetch blogs
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
@@ -73,25 +71,21 @@ const AdminDash = () => {
     fetchBlogs();
   }, []);
 
-  // Handle input changes for title, subtitle, body
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle category checkbox toggle
   const toggleCategory = (cat) => {
     setSelectedCategories((prev) =>
       prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
     );
   };
 
-  // Handle media file selection
   const handleMediaChange = (e) => {
     setMediaFiles(Array.from(e.target.files));
   };
 
-  // Submit new blog
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -101,19 +95,21 @@ const AdminDash = () => {
       data.append("title", formData.title);
       data.append("subtitle", formData.subtitle);
       data.append("body", formData.body);
-      data.append("categories", JSON.stringify(selectedCategories));
 
+      // Append each category individually
+      selectedCategories.forEach((cat) => {
+        data.append("categories", cat);
+      });
+
+      // Append each media file
       mediaFiles.forEach((file) => {
         data.append("media", file);
       });
 
-      const res = await fetch(
-        `https://qurioans.onrender.com/createblog/${adminId}`,
-        {
-          method: "POST",
-          body: data,
-        }
-      );
+      const res = await fetch(`http://localhost:5003/createblog/${adminId}`, {
+        method: "POST",
+        body: data,
+      });
 
       if (!res.ok) {
         const errData = await res.json();
@@ -121,11 +117,7 @@ const AdminDash = () => {
       }
 
       const newBlog = await res.json();
-
-      // Add new blog to the list
       setBlogs((prev) => [newBlog, ...prev]);
-
-      // Reset form
       setFormData({ title: "", subtitle: "", body: "" });
       setSelectedCategories([]);
       setMediaFiles([]);
@@ -147,9 +139,7 @@ const AdminDash = () => {
   if (loading)
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-center mt-0 text-lg font-semibold">
-          Loading blogs...
-        </p>
+        <p className="text-center text-lg font-semibold">Loading blogs...</p>
       </div>
     );
 
@@ -292,7 +282,6 @@ const AdminDash = () => {
                 )}
                 <p className="mb-2 whitespace-pre-line">{blog.body}</p>
 
-                {/* Categories */}
                 {blog.categories && blog.categories.length > 0 && (
                   <div className="mb-2 flex flex-wrap gap-2">
                     {blog.categories.map((cat) => (
@@ -306,7 +295,6 @@ const AdminDash = () => {
                   </div>
                 )}
 
-                {/* Media */}
                 {blog.image && blog.image.length > 0 && (
                   <div className="flex flex-wrap gap-3 mt-3">
                     {blog.image.map((media, idx) => {
@@ -331,7 +319,6 @@ const AdminDash = () => {
                   </div>
                 )}
 
-                {/* Created by info */}
                 {blog.createdBy && (
                   <div className="mt-3 flex items-center space-x-3 text-sm text-gray-500">
                     {blog.createdBy.avatarUrl && (
@@ -341,15 +328,16 @@ const AdminDash = () => {
                         className="w-8 h-8 rounded-full object-cover"
                       />
                     )}
-                    <button
-                      onClick={() => handleEditClick(blog._id)}
-                      className="bg-purple-600 hover:bg-purple-900 p-3 font-medium text-white rounded-xl"
-                    >
-                      Edit Blog
-                    </button>
-                    <span>By {blog.createdBy.userName || "Unknown"}</span>
+                    <span>{blog.createdBy.userName}</span>
                   </div>
                 )}
+
+                <button
+                  onClick={() => handleEditClick(blog._id)}
+                  className="mt-3 text-sm text-purple-600 hover:underline"
+                >
+                  Edit
+                </button>
               </div>
             ))}
           </div>
