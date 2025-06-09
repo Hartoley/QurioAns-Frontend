@@ -5,6 +5,10 @@ import QurioAns from "./Users/QurioAns";
 import Login from "./Users/Login";
 import VerifyOtp from "./components/ui/VerifyOtp";
 import Verify from "./Users/Verify";
+import UserDash from "./Users/UserDash";
+import AdminDash from "./components/ui/AdminDash";
+import Admin from "./Admin/Admin";
+import BlogEditor from "./Admin/Blog";
 
 function App() {
   return (
@@ -12,6 +16,9 @@ function App() {
       <Routes>
         <Route path="/" element={<QurioAns />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/dashboard/:userId" element={<UserDash />} />
+        <Route path="/blog/:blogId" element={<BlogEditor />} />
+        <Route path="/admin/dashboard/:adminId" element={<Admin />} />
         <Route path="/verifyotp/:userId" element={<Verify />} />
       </Routes>
     </>

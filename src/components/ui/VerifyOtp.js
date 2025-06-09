@@ -34,6 +34,7 @@ const VerifyOtp = () => {
       );
       setMessage(res.data.message);
       setLoading(false);
+
       setTimeout(() => {
         navigate("/login");
       }, 2000);
