@@ -26,10 +26,13 @@ const LoginBody = ({ showSignup = false }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post("https://qurioans.onrender.com/signin", {
-        email: formData.email,
-        password: formData.password,
-      });
+      const res = await axios.post(
+        "https://qurioans.onrender.com/qurioans/signin",
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
       alert(res.data.message);
       localStorage.setItem("adminId", res.data.id);
       navigate(`/admin/dashboard/${res.data.id}`);
@@ -45,7 +48,7 @@ const LoginBody = ({ showSignup = false }) => {
     setLoading(true);
     try {
       const res = await axios.post(
-        "https://qurioans.onrender.com/signup",
+        "https://qurioans.onrender.com/qurioans/signup",
         formData
       );
       alert(res.data.message);
@@ -66,7 +69,7 @@ const LoginBody = ({ showSignup = false }) => {
     <>
       <Navbar />
 
-      <div className="mt-16 relative flex items-center justify-center sm:h-[90vh] h-[60vh] bg-black overflow-hidden">
+      <div className="mt-16 relative flex items-center justify-center sm:h-[90vh] h-[75vh] bg-black overflow-hidden">
         {/* Background Video */}
         <video
           className="absolute top-0 left-0 w-full h-full object-cover"
@@ -79,7 +82,7 @@ const LoginBody = ({ showSignup = false }) => {
         <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
         {/* Form Container */}
-        <div className="relative z-10 sm:h-[85vh] h-[55vh] bg-[#0a0a23cc] border border-pink-400 rounded-xl shadow-lg p-10 w-full max-w-md mx-4">
+        <div className="relative z-10 sm:h-[85vh] h-[70vh] bg-[#0a0a23cc] border border-pink-400 rounded-xl shadow-lg p-10 w-full max-w-md mx-4">
           {/* Loader */}
           {loading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50 rounded-xl">
