@@ -18,7 +18,7 @@ const Headers = () => {
         <section className="h-[90%] w-full pt-20 sm:px-20 bg-gradient-to-br from-[rgb(5,4,48)] to-[#202566] text-white font-sans flex items-center justify-center">
           <div className="sm:w-3/4 w-full bg-white/5 backdrop-blur-lg h-full p-3 rounded-lg flex sm:flex-row justify-center sm:justify-between items-center shadow-lg flex-col gap-5 sm:gap-0">
             <motion.div
-              className="bg-white/10 sm:w-2/6 p-4 sm:h-full h-1/3 rounded-lg shadow-lg w-full flex flex-col items-center justify-center gap-2"
+              className="bg-white/10 sm:w-2/6 p-4 sm:h-full h-2/3 rounded-lg shadow-lg w-full flex flex-col items-center justify-center gap-2"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
@@ -48,12 +48,8 @@ const Headers = () => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
               >
-                <p className="text-2xl sm:text-3xl font-bold mb-2">
+                <p className="text-xl sm:text-2xl text-center font-bold mb-1">
                   How Technology is Reshaping Our Lives
-                </p>
-                <p className="text-sm text-white/80">
-                  From virtual reality to smart environments, explore how modern
-                  tech is transforming the human experience.
                 </p>
               </motion.div>
               <motion.div

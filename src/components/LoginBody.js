@@ -66,7 +66,7 @@ const LoginBody = () => {
   };
 
   return (
-    <div className="mt-16 relative flex items-center justify-center sm:h-[90vh] h-[60vh] bg-black overflow-hidden">
+    <div className="mt-16 relative flex items-center justify-center sm:h-[90vh] h-[75vh] bg-black overflow-hidden">
       {/* Background Video */}
       <video
         className="absolute top-0 left-0 w-full h-full object-cover"
@@ -79,7 +79,7 @@ const LoginBody = () => {
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
       {/* Form Container */}
-      <div className="relative z-10 sm:h-[85vh] h-[55vh] bg-[#0a0a23cc] border border-pink-400 rounded-xl shadow-lg p-10 w-full max-w-md mx-4">
+      <div className="relative z-10 sm:h-[85vh] h-[70vh] bg-[#0a0a23cc] border border-pink-400 rounded-xl shadow-lg p-10 w-full max-w-md mx-4">
         {/* Loader */}
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/80 z-50 rounded-xl">
