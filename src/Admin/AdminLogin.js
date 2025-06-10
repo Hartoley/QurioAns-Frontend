@@ -1,3 +1,4 @@
+// AdminLogin.jsx
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
@@ -5,8 +6,9 @@ import { useNavigate } from "react-router-dom";
 import DashNav from "../components/ui/DashNav";
 import Footer from "../components/ui/Footer";
 
-const AdminLogin = () => {
-  const [isLogin, setIsLogin] = useState(true);
+const AdminLogin = ({ showSignup = false }) => {
+  // Added showSignup prop with default value
+  const [isLogin, setIsLogin] = useState(!showSignup); // Initialize based on prop
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     userName: "",

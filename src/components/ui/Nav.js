@@ -94,22 +94,29 @@ export default function Navbar() {
           )}
         </ul>
 
-        {pathname !== "/signup" &&
-          (isLoggedIn ? (
-            <button
-              onClick={signin}
-              className="hidden md:block bg-gradient-to-r from-pink-500 to-orange-400 hover:opacity-45 text-white px-4 py-2 rounded-full text-sm font-semibold"
-            >
-              Stories
-            </button>
-          ) : (
-            <button
-              onClick={handleGetStarted}
-              className="hidden md:block bg-gradient-to-r from-pink-500 to-orange-400 hover:opacity-45 text-white px-4 py-2 rounded-full text-sm font-semibold"
-            >
-              Get Started
-            </button>
-          ))}
+        {/* Conditionally render the button */}
+        {isLoggedIn ? (
+          <button
+            onClick={signin}
+            className="hidden md:block bg-gradient-to-r from-pink-500 to-orange-400 hover:opacity-45 text-white px-4 py-2 rounded-full text-sm font-semibold"
+          >
+            Stories
+          </button>
+        ) : pathname === "/signup" ? (
+          <button
+            onClick={signin}
+            className="hidden md:block bg-gradient-to-r from-pink-500 to-orange-400 hover:opacity-45 text-white px-4 py-2 rounded-full text-sm font-semibold"
+          >
+            Already Signed Up? Login
+          </button>
+        ) : (
+          <button
+            onClick={handleGetStarted}
+            className="hidden md:block bg-gradient-to-r from-pink-500 to-orange-400 hover:opacity-45 text-white px-4 py-2 rounded-full text-sm font-semibold"
+          >
+            Get Started
+          </button>
+        )}
 
         {/* Mobile Menu Icon */}
         <div className="md:hidden">

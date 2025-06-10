@@ -19,7 +19,12 @@ function App() {
         <Route path="/" element={<QurioAns />} />
         <Route path="/login" element={<Login />} />
         <Route path="/createblog" element={<CreateBlog />} />
-        <Route path="admin/login" element={<AdminLogin />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/signup" element={<Login showSignup={true} />} />
+        <Route
+          path="/admin/signup"
+          element={<AdminLogin showSignup={true} />}
+        />
         <Route path="/dashboard/:userId" element={<UserDash />} />
         <Route path="/blog/:blogId" element={<BlogEditor />} />
         <Route path="/admin/dashboard/:adminId" element={<Admin />} />
