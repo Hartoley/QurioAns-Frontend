@@ -5,6 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DashNav from "../components/ui/DashNav";
 import Footer from "../components/ui/Footer";
+import Navbar from "./AdminNav";
 
 const AdminLogin = ({ showSignup = false }) => {
   // Added showSignup prop with default value
@@ -63,7 +64,7 @@ const AdminLogin = ({ showSignup = false }) => {
 
   return (
     <>
-      <DashNav />
+      <Navbar />
 
       <div className="mt-16 relative flex items-center justify-center sm:h-[90vh] h-[60vh] bg-black overflow-hidden">
         {/* Background Video */}
