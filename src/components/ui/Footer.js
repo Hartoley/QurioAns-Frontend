@@ -7,7 +7,7 @@ import logo from "../../Images/cover-removebg-preview.png";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-[#0a0a23] text-white py-6 flex flex-col items-center gap-6">
+    <footer className="w-full z-20 bg-[#0a0a23] text-white py-6 flex flex-col items-center gap-6">
       {/* Logo & Social Icons */}
       <div className="flex flex-col sm:flex-row justify-between items-center w-[90%] max-w-5xl gap-4">
         <img src={logo} className="w-20 h-20 rounded-full" alt="logo" />

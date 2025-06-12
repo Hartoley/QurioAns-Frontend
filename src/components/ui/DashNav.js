@@ -170,7 +170,7 @@ const DashNav = () => {
             onClick={() => navigate("/write")}
             className="py-2 border-b border-white/10 cursor-pointer"
           >
-            Write
+            Audio
           </div>
           <div
             onClick={() => navigate("/notifications")}
