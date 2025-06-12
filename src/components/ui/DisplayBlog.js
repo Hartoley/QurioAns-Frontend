@@ -130,7 +130,7 @@ export default function DisplayBlog() {
       <>
         <DashNav />
         <div
-          className="mt-16 max-w-4xl mx-auto px-6 animate-pulse"
+          className="mt-16 max-w-4xl mx-auto px-6 animate-pulse pb-44"
           role="status"
           aria-label="Loading blog content"
         >
