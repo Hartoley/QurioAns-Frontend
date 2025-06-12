@@ -33,7 +33,7 @@ const UsersBlog = ({ selectedTopic, onClearTopic }) => {
   }, [selectedTopic]);
 
   return (
-    <div className="sm:w-2/3 w-full min-h-screen p-4 overflow-y-auto">
+    <div className="sm:w-2/3 w-full min-h-screen p-4 overflow-y-auto scrollbar-hide">
       <h1 className="text-2xl font-bold text-white mb-4">
         {selectedTopic ? `${selectedTopic} Blogs` : "User Blogs"}
       </h1>
