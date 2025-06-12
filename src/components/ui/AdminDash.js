@@ -30,19 +30,70 @@ const AdminDash = () => {
     fetchBlogs();
   }, []);
 
-  if (error)
+  if (error) {
     return (
-      <p className="text-center mt-10 text-red-600 font-semibold">
-        Error: {error}
-      </p>
-    );
+      <>
+        <div className="min-h-[80vh] max-w-4xl mx-auto px-4 py-8 space-y-6">
+          <div className="h-10 bg-red-100 text-red-700 font-semibold px-4 py-2 rounded border border-red-300 shadow">
+            ⚠️ Error loading blog: {error}
+          </div>
 
-  if (loading)
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-center text-lg font-semibold">Loading blogs...</p>
-      </div>
+          {/* Fake skeleton UI for fallback */}
+          <div className="animate-pulse space-y-6">
+            <div className="h-10 bg-gray-200 rounded w-3/4"></div>
+            <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+            <div className="h-64 bg-gray-200 rounded"></div>
+            <div className="h-6 bg-gray-200 rounded w-1/4"></div>
+            <div className="flex flex-wrap gap-2">
+              {Array.from({ length: 6 }).map((_, idx) => (
+                <div
+                  key={idx}
+                  className="h-8 w-20 bg-gray-200 rounded-full"
+                ></div>
+              ))}
+            </div>
+            <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+            <div className="flex gap-4">
+              {Array.from({ length: 3 }).map((_, idx) => (
+                <div key={idx} className="w-24 h-24 bg-gray-200 rounded"></div>
+              ))}
+            </div>
+            <div className="h-10 bg-gray-300 rounded w-32"></div>
+          </div>
+        </div>
+      </>
     );
+  }
+
+  if (loading) {
+    return (
+      <>
+        <div className="min-h-[80vh] max-w-4xl mx-auto px-4 py-8 animate-pulse space-y-6">
+          <div className="h-10 bg-gray-200 rounded w-3/4"></div> {/* Title */}
+          <div className="h-6 bg-gray-200 rounded w-1/2"></div> {/* Subtitle */}
+          <div className="h-64 bg-gray-200 rounded"></div> {/* Editor body */}
+          <div className="h-6 bg-gray-200 rounded w-1/4"></div>{" "}
+          {/* Categories title */}
+          <div className="flex flex-wrap gap-2">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="h-8 w-20 bg-gray-200 rounded-full"
+              ></div>
+            ))}
+          </div>
+          <div className="h-6 bg-gray-200 rounded w-1/3"></div>{" "}
+          {/* Media label */}
+          <div className="flex gap-4">
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <div key={idx} className="w-24 h-24 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+          <div className="h-10 bg-gray-300 rounded w-32"></div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -125,7 +176,7 @@ const AdminDash = () => {
 
                   <button
                     onClick={() => handleEditClick(blog._id)}
-                    className="mt-3 text-sm text-purple-600 hover:underline"
+                    className="mt-3 py-2 text-sm w-20 rounded-lg bg-pink-500 hover:bg-pink-400 text-white hover:underline"
                   >
                     Edit
                   </button>

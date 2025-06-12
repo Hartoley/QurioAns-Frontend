@@ -7,6 +7,7 @@ import {
   FiUser,
   FiSettings,
   FiLogOut,
+  FiMic,
 } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -97,8 +98,8 @@ const DashNav = () => {
         {/* Actions */}
         <div className="flex items-center gap-4">
           <button className="hidden md:flex items-center gap-1 text-white hover:text-purple-300 font-semibold">
-            <FiEdit2 size={18} />
-            <span>Write</span>
+            <FiMic size={18} />
+            <span>Audio</span>
           </button>
 
           <FiBell

@@ -183,7 +183,6 @@ const LoginBody = ({ showSignup = false }) => {
           </p>
         </div>
       </div>
-      <Footer />
     </>
   );
 };

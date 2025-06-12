@@ -68,9 +68,12 @@ const CreateBlog = () => {
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
-      ["bold", "italic", "underline", "strike"],
+      ["bold", "italic", "underline", "strike", "blockquote", "code-block"],
       [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "image"],
+      [{ script: "sub" }, { script: "super" }],
+      [{ indent: "-1" }, { indent: "+1" }],
+      [{ align: [] }],
+      ["link", "image", "video"],
       ["clean"],
     ],
   };
@@ -165,23 +168,25 @@ const CreateBlog = () => {
         >
           Body <span className="text-red-600">*</span>
         </label>
-        <ReactQuill
-          theme="snow"
-          value={formData.body}
-          onChange={(content) =>
-            setFormData((prev) => ({ ...prev, body: content }))
-          }
-          modules={modules}
-          ref={quillRef}
-          placeholder="Write your blog content here..."
-          style={{
-            minHeight: "500px",
-            maxHeight: "800px",
-            overflowY: "auto",
-            borderRadius: "0.375rem",
-          }}
-          className="mb-2"
-        />
+        <div className="border border-gray-300 rounded-md overflow-hidden bg-white">
+          <ReactQuill
+            style={{
+              minHeight: "500px",
+              maxHeight: "800px",
+              overflowY: "auto",
+              borderRadius: "0.375rem",
+            }}
+            theme="snow"
+            value={formData.body}
+            onChange={(content) =>
+              setFormData((prev) => ({ ...prev, body: content }))
+            }
+            modules={modules}
+            ref={quillRef}
+            placeholder="Write your blog content here..."
+            className="min-h-[400px] max-h-[700px] overflow-y-auto"
+          />
+        </div>
       </div>
 
       {/* Categories checkboxes */}
