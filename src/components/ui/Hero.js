@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 
 const Hero = () => {
   const navigate = useNavigate();
-  const { QurioUser } = useParams();
   const [blogItems, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -39,10 +38,10 @@ const Hero = () => {
       <section className="z-20 sm:px-20 min-h-screen px-6 py-20 bg-gradient-to-br from-[rgb(5,4,48)] to-[#202566] text-white font-sans">
         <div className="max-w-7xl mx-auto">
           <div className="mb-10 text-center">
-            <h1 className="text-2xl md:text-5xl text-pink-500 font-bold mb-4">
+            <h1 className="text-xl md:text-4xl text-pink-500 font-bold mb-4">
               Explore Our Latest Blog Posts
             </h1>
-            <p className="text-white/70 text-orange-400 text-lg max-w-2xl mx-auto">
+            <p className="text-white/70 text-orange-400 text-md max-w-2xl mx-auto">
               Tips, trends, and insights curated for your growth, creativity,
               and clarity.
             </p>
@@ -73,17 +72,17 @@ const Hero = () => {
     <section className="z-20 sm:px-20 min-h-screen px-6 py-20 bg-gradient-to-br from-[rgb(5,4,48)] to-[#202566] text-white font-sans">
       <div className="max-w-7xl mx-auto">
         <div className="mb-10 text-center">
-          <h1 className="text-2xl md:text-5xl text-pink-500 font-bold mb-4">
+          <h1 className="text-xl md:text-4xl text-pink-500 font-bold mb-4">
             Explore Our Latest Blog Posts
           </h1>
-          <p className="text-white/70 text-orange-400 text-lg max-w-2xl mx-auto">
+          <p className="text-white/70 text-orange-400 text-md max-w-2xl mx-auto">
             Tips, trends, and insights curated for your growth, creativity, and
             clarity.
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-10">
-          {blogItems.map((item, i) => {
+          {blogItems.slice(0, 6).map((item, i) => {
             let imageUrl = "https://via.placeholder.com/400x240?text=No+Image";
             if (Array.isArray(item.image) && item.image.length > 0) {
               imageUrl = item.image[0]?.image || imageUrl;
@@ -94,6 +93,12 @@ const Hero = () => {
             ) {
               imageUrl = item.image.image;
             }
+
+            // Truncate title to a maximum of 40 characters
+            const truncatedTitle =
+              item.title.length > 40
+                ? `${item.title.substring(0, 40)}...`
+                : item.title;
 
             return (
               <motion.div
@@ -111,7 +116,7 @@ const Hero = () => {
                     className="w-full h-full object-cover object-top"
                   />
                 </div>
-                <h3 className="text-xl font-bold mb-2">{item.title}</h3>
+                <h3 className="text-lg font-bold mb-2">{truncatedTitle}</h3>
                 <p className="text-sm text-white/80 mb-4">{item.subtitle}</p>
                 <button
                   onClick={() => handleNavigate(`/blog/${item._id}`)}
