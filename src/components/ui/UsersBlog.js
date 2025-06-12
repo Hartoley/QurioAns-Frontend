@@ -49,9 +49,7 @@ const UsersBlog = ({ selectedTopic, onClearTopic }) => {
 
         <div className="flex flex-wrap gap-3 items-center p-3">
           <button
-            onClick={() => {
-              // Handle Top Reads (e.g. setSortOption or toggle a flag)
-            }}
+            onClick={onClearTopic}
             className="text-sm px-4 py-2 bg-[rgb(6,4,52)] text-white rounded hover:bg-[rgba(6,4,52,0.9)] transition"
           >
             🔥 Top Reads
@@ -82,7 +80,9 @@ const UsersBlog = ({ selectedTopic, onClearTopic }) => {
 
       {/* Main Heading */}
       <h1 className="text-2xl font-bold text-black mb-4">
-        {selectedTopic ? `${selectedTopic} Contents` : "Trending...."}
+        {selectedTopic
+          ? `${selectedTopic} Contents`
+          : "Trending selections for you"}
       </h1>
 
       {/* Conditional Rendering */}
