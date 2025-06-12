@@ -13,6 +13,7 @@ const AdminDash = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [expandedPosts, setExpandedPosts] = useState({});
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -29,6 +30,19 @@ const AdminDash = () => {
     };
     fetchBlogs();
   }, []);
+
+  const toggleExpanded = (id) => {
+    setExpandedPosts((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  const stripHtml = (html) => {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+  };
 
   if (error) {
     return (
@@ -143,10 +157,41 @@ const AdminDash = () => {
                   )}
 
                   {/* Render HTML from Quill content */}
-                  <div
-                    className="prose max-w-none [&_img]:w-64 [&_img]:h-auto [&_img]:rounded"
-                    dangerouslySetInnerHTML={{ __html: blog.body }}
-                  ></div>
+                  {/* Render HTML from Quill content with See more/less */}
+                  {blog.body ? (
+                    <div className="mt-2">
+                      {expandedPosts[blog._id] ? (
+                        <>
+                          <div
+                            className="prose max-w-none [&_img]:w-64 [&_img]:h-auto [&_img]:rounded"
+                            dangerouslySetInnerHTML={{ __html: blog.body }}
+                          />
+                          <button
+                            onClick={() => toggleExpanded(blog._id)}
+                            className="text-pink-500 hover:underline text-sm mt-2 mb-2"
+                          >
+                            See less
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <div className="text-gray-700">
+                            {stripHtml(blog.body).slice(0, 200)}...
+                          </div>
+                          <button
+                            onClick={() => toggleExpanded(blog._id)}
+                            className="text-red-500 mb-2 hover:underline text-sm mt-2"
+                          >
+                            See more
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-sm italic text-gray-400 mt-2">
+                      No content available.
+                    </p>
+                  )}
 
                   {blog.categories && blog.categories.length > 0 && (
                     <div className="mb-2 flex flex-wrap gap-2">
