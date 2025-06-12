@@ -33,11 +33,59 @@ const UsersBlog = ({ selectedTopic, onClearTopic }) => {
   }, [selectedTopic]);
 
   return (
-    <div className="sm:w-2/3 w-full min-h-screen p-4 overflow-y-auto scrollbar-hide">
-      <h1 className="text-2xl font-bold text-white mb-4">
-        {selectedTopic ? `${selectedTopic} Blogs` : "User Blogs"}
+    <div className="sm:w-2/3 w-full min-h-screen p-4 sm:pb-8 overflow-y-auto scrollbar-hide">
+      {/* Intro Section */}
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold text-black mb-1">
+          Welcome to QurioAns
+        </h2>
+        <p className="text-gray-900 text-sm mb-3">
+          Explore insightful and thought-provoking blogs from our ever-growing
+          community of curious minds. From deep dives into AI breakthroughs to
+          personal reflections, tutorials, and curated opinions — QurioAns
+          brings together the voices shaping tomorrow’s ideas. Discover, learn,
+          and get inspired — all in one place.
+        </p>
+
+        <div className="flex flex-wrap gap-3 items-center p-3">
+          <button
+            onClick={() => {
+              // Handle Top Reads (e.g. setSortOption or toggle a flag)
+            }}
+            className="text-sm px-4 py-2 bg-[rgb(6,4,52)] text-white rounded hover:bg-[rgba(6,4,52,0.9)] transition"
+          >
+            🔥 Top Reads
+          </button>
+          {/* 
+          <select
+            onChange={(e) => {
+              const sortBy = e.target.value;
+              // Handle sort logic with setSortOption
+            }}
+            className="text-sm px-3 py-2 border border-gray-600 rounded bg-transparent text-black"
+          >
+            <option className="text-black" value="">
+              Sort by
+            </option>
+            <option className="text-black" value="latest">
+              Newest
+            </option>
+            <option className="text-black" value="likes">
+              Most Liked
+            </option>
+            <option className="text-black" value="comments">
+              Most Commented
+            </option>
+          </select> */}
+        </div>
+      </div>
+
+      {/* Main Heading */}
+      <h1 className="text-2xl font-bold text-black mb-4">
+        {selectedTopic ? `${selectedTopic} Contents` : "Trending...."}
       </h1>
 
+      {/* Conditional Rendering */}
       {loading ? (
         <p className="text-gray-400">Loading blogs...</p>
       ) : blogs.length === 0 ? (
@@ -46,7 +94,7 @@ const UsersBlog = ({ selectedTopic, onClearTopic }) => {
           <div className="mt-6">
             <button
               onClick={onClearTopic}
-              className="bg-[rgb(6,4,52)] hover:bg-[rgba(6,4,52,0.84)] text-white text-sm px-4 py-2 rounded"
+              className="bg-[rgb(6,4,52)] hover:bg-[rgba(6,4,52,0.84)] text-black text-sm px-4 py-2 rounded"
             >
               Go Back to All Blogs
             </button>
@@ -54,57 +102,61 @@ const UsersBlog = ({ selectedTopic, onClearTopic }) => {
         </div>
       ) : (
         blogs.map((blog) => (
-          <div key={blog._id} className="mb-6 bg-white rounded-lg p-4 shadow">
-            <h2 className="text-xl font-semibold text-gray-900 mb-1">
-              {blog.title}
-            </h2>
+          <div
+            key={blog._id}
+            className="flex flex-col sm:flex-row gap-4 bg-blatext-black rounded-lg p-4 shadow mb-6"
+          >
+            {/* LEFT: Textual content */}
+            <div className="flex-1">
+              <p className="text-sm flex items-center gap-1 text-gray-600 mb-1">
+                <img
+                  src={
+                    blog?.createdBy?.avatarUrl ||
+                    `https://i.pinimg.com/736x/ec/dd/5a/ecdd5aacabb70ecca9bfdaeec9ef2ba4.jpg`
+                  }
+                  alt="avatar"
+                  className="w-5 h-5 rounded-full object-cover"
+                />
+                By {blog.createdBy?.userName || "Anonymous"} •{" "}
+                {new Date(blog.createdAt).toLocaleDateString()}
+              </p>
+
+              <h2 className="text-xl font-bold text-gray-900 mb-1">
+                {blog.title}
+              </h2>
+
+              <p className="text-gray-700 text-sm mb-2 line-clamp-2">
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: blog.body,
+                  }}
+                />
+              </p>
+
+              <div className="text-sm text-gray-600 flex gap-4 mt-auto">
+                <span>❤️ {blog.likesCount} Likes</span>
+                <span>💬 {blog.commentsCount} Comments</span>
+              </div>
+            </div>
+
+            {/* RIGHT: Image or video preview */}
             {blog.image && blog.image.length > 0 && (
-              <div className="flex flex-wrap gap-3 mt-3">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-                  {blog.image.map((media, idx) => {
-                    const url = media.image;
-                    const isVideo = url.match(/\.(mp4|webm|ogg)$/i);
-                    return isVideo ? (
-                      <video
-                        key={idx}
-                        src={url}
-                        controls
-                        className="w-full aspect-video object-cover object-top rounded border"
-                      />
-                    ) : (
-                      <img
-                        key={idx}
-                        src={url}
-                        alt={`media-${idx}`}
-                        className="w-full aspect-[4/3] object-cover object-top rounded border"
-                      />
-                    );
-                  })}
-                </div>
+              <div className="w-full sm:w-48 flex-shrink-0">
+                {blog.image[0].image.match(/\.(mp4|webm|ogg)$/i) ? (
+                  <video
+                    src={blog.image[0].image}
+                    controls
+                    className="w-full aspect-video object-cover rounded"
+                  />
+                ) : (
+                  <img
+                    src={blog.image[0].image}
+                    alt="thumbnail"
+                    className="w-full aspect-[4/3] object-cover object-top rounded"
+                  />
+                )}
               </div>
             )}
-            <p className="text-sm flex gap-1 text-gray-600 mb-2">
-              <img
-                src={
-                  blog?.createdBy?.avatarUrl ||
-                  `https://i.pinimg.com/736x/ec/dd/5a/ecdd5aacabb70ecca9bfdaeec9ef2ba4.jpg`
-                }
-                alt={blog.createdBy.userName}
-                className="w-5 h-5 rounded-full object-cover"
-              />
-              By {blog.createdBy?.userName || "Anonymous"} {"  "}
-              {new Date(blog.createdAt).toLocaleDateString()}
-            </p>
-
-            <div
-              className="text-gray-800 line-clamp-3 mb-2 prose max-w-none overflow-hidden"
-              dangerouslySetInnerHTML={{ __html: blog.body }}
-            />
-
-            <div className="text-sm text-gray-600 flex items-center justify-between">
-              <span>❤️ {blog.likesCount} Likes</span>
-              <span>💬 {blog.commentsCount} Comments</span>
-            </div>
           </div>
         ))
       )}

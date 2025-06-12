@@ -108,7 +108,7 @@ const DashContent = () => {
 
   return (
     <>
-      <div className="flex max-h-[200vh] scrollbar-hide sm:px-20 p-0 sm:flex-row flex-col">
+      <div className="flex w-full max-h-[200vh] scrollbar-hide sm:px-10 pt-20 py-8 sm:flex-row flex-col">
         <UsersBlog
           selectedTopic={selectedTopic}
           onClearTopic={() => setSelectedTopic(null)}
