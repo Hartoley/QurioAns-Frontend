@@ -39,8 +39,8 @@ const UsersBlog = ({ selectedTopic, onClearTopic }) => {
     <div className="sm:w-2/3 w-full sm:min-h-screen h-auto p-4 sm:pb-8 sm:overflow-y-auto scrollbar-hide">
       {/* Intro Section */}
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-black mb-1">
-          Welcome to QurioAns
+        <h2 className="text-xl font-bold text-black mb-1">
+          Curiosity and Answers!!!
         </h2>
         <p className="text-gray-900 text-sm mb-3">
           Explore insightful and thought-provoking blogs from our ever-growing
