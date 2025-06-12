@@ -119,7 +119,9 @@ const Hero = () => {
                 <h3 className="text-lg font-bold mb-2">{truncatedTitle}</h3>
                 <p className="text-sm text-white/80 mb-4">{item.subtitle}</p>
                 <button
-                  onClick={() => handleNavigate(`/blog/${item._id}`)}
+                  onClick={() =>
+                    handleNavigate(`/blog/${item.title}/${item._id}/${user}`)
+                  }
                   className="bg-gradient-to-r from-pink-500 to-orange-400 px-4 py-2 rounded-full text-sm font-medium hover:opacity-45 transition"
                 >
                   Read more
