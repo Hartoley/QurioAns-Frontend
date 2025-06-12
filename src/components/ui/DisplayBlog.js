@@ -116,7 +116,40 @@ export default function DisplayBlog() {
     });
   };
 
-  if (!blog) return <p>Loading...</p>;
+  if (!blog) {
+    return (
+      <div
+        className="mt-16 max-w-4xl mx-auto px-6 animate-pulse"
+        role="status"
+        aria-label="Loading blog content"
+      >
+        {/* Title skeleton */}
+        <div className="h-10 bg-indigo-300 rounded-lg max-w-3/4 mb-6"></div>
+
+        {/* Subtitle skeleton */}
+        <div className="h-6 bg-indigo-200 rounded-lg max-w-1/2 mb-10"></div>
+
+        {/* Paragraph skeleton */}
+        <div className="space-y-4">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-4 bg-indigo-200 rounded max-w-full"></div>
+          ))}
+        </div>
+
+        {/* Like and comment section skeleton */}
+        <div className="flex items-center space-x-6 mt-10">
+          <div className="h-6 w-20 bg-indigo-300 rounded-lg"></div>
+          <div className="h-6 w-12 bg-indigo-300 rounded-lg"></div>
+        </div>
+
+        {/* Comment input skeleton */}
+        <div className="mt-10">
+          <div className="h-10 bg-indigo-200 rounded-full w-full"></div>
+          <div className="h-8 w-24 bg-indigo-300 rounded-full mt-4"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
