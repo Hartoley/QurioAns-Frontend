@@ -11,8 +11,8 @@ export default function DisplayBlog() {
   const [blog, setBlog] = useState(null);
   const [commentInput, setCommentInput] = useState("");
   const [replyInputs, setReplyInputs] = useState({});
-  const [showLikers, setShowLikers] = useState(null); // { blogId, likers }
-  const userId = localStorage.getItem("QurioUser ");
+  const [showLikers, setShowLikers] = useState(null);
+  const userId = localStorage.getItem("QurioUser");
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -21,6 +21,7 @@ export default function DisplayBlog() {
           `https://qurioans.onrender.com/getblog/${id}`
         );
         setBlog(response.data);
+        console.log(blog);
       } catch (err) {
         console.error(err);
       }
@@ -45,7 +46,7 @@ export default function DisplayBlog() {
         `https://qurioans.onrender.com/comment/${userId}/${blog._id}`,
         {
           comment: commentInput,
-          model: "User ",
+          model: "User",
         }
       );
       setBlog((prev) => ({
@@ -62,7 +63,13 @@ export default function DisplayBlog() {
     try {
       const response = await axios.put(
         `https://qurioans.onrender.com/replycomment/${blog._id}/${commentId}`,
-        { userId, comment: replyInputs[commentId] }
+        {
+          commenter: {
+            id: userId,
+            model: "User",
+          },
+          comment: replyInputs[commentId].trim(),
+        }
       );
       const updatedComments = blog.comments.map((c) =>
         c._id === commentId
@@ -72,11 +79,13 @@ export default function DisplayBlog() {
       setBlog((prev) => ({ ...prev, comments: updatedComments }));
       setReplyInputs({ ...replyInputs, [commentId]: "" });
     } catch (err) {
-      console.error(err);
+      console.error("Error adding reply:", err.response?.data || err.message);
     }
   };
 
   const handleLikeComment = async (commentId) => {
+    console.log(userId);
+
     try {
       const response = await axios.put(
         `https://qurioans.onrender.com/likecomment/${blog._id}/${commentId}`,
@@ -118,36 +127,44 @@ export default function DisplayBlog() {
 
   if (!blog) {
     return (
-      <div
-        className="mt-16 max-w-4xl mx-auto px-6 animate-pulse"
-        role="status"
-        aria-label="Loading blog content"
-      >
-        {/* Title skeleton */}
-        <div className="h-10 bg-indigo-300 rounded-lg max-w-3/4 mb-6"></div>
+      <>
+        <DashNav />
+        <div
+          className="mt-16 max-w-4xl mx-auto px-6 animate-pulse"
+          role="status"
+          aria-label="Loading blog content"
+        >
+          {/* Title skeleton */}
+          <div className="h-10 bg-indigo-300 rounded-lg max-w-3/4 mb-6"></div>
 
-        {/* Subtitle skeleton */}
-        <div className="h-6 bg-indigo-200 rounded-lg max-w-1/2 mb-10"></div>
+          {/* Subtitle skeleton */}
+          <div className="h-6 bg-indigo-200 rounded-lg max-w-1/2 mb-10"></div>
 
-        {/* Paragraph skeleton */}
-        <div className="space-y-4">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-4 bg-indigo-200 rounded max-w-full"></div>
-          ))}
+          {/* Paragraph skeleton */}
+          <div className="space-y-4">
+            {[...Array(5)].map((_, i) => (
+              <div
+                key={i}
+                className="h-4 bg-indigo-200 rounded max-w-full"
+              ></div>
+            ))}
+          </div>
+
+          {/* Like and comment section skeleton */}
+          <div className="flex items-center space-x-6 mt-10">
+            <div className="h-6 w-20 bg-indigo-300 rounded-lg"></div>
+            <div className="h-6 w-12 bg-indigo-300 rounded-lg"></div>
+          </div>
+
+          {/* Comment input skeleton */}
+          <div className="mt-10">
+            <div className="h-10 bg-indigo-200 rounded-full w-full"></div>
+            <div className="h-8 w-24 bg-indigo-300 rounded-full mt-4"></div>
+          </div>
         </div>
 
-        {/* Like and comment section skeleton */}
-        <div className="flex items-center space-x-6 mt-10">
-          <div className="h-6 w-20 bg-indigo-300 rounded-lg"></div>
-          <div className="h-6 w-12 bg-indigo-300 rounded-lg"></div>
-        </div>
-
-        {/* Comment input skeleton */}
-        <div className="mt-10">
-          <div className="h-10 bg-indigo-200 rounded-full w-full"></div>
-          <div className="h-8 w-24 bg-indigo-300 rounded-full mt-4"></div>
-        </div>
-      </div>
+        <Footer />
+      </>
     );
   }
 
@@ -243,8 +260,10 @@ export default function DisplayBlog() {
                       : "text-gray-500"
                   } hover:underline`}
                 >
-                  {comment.likedBy?.includes(userId) ? "❤️ Unlike" : "🤍 Like"}{" "}
-                  ({comment.likes || 0})
+                  {comment.likedBy?.some((liker) => liker._id === userId)
+                    ? "❤️ liked"
+                    : "🤍 Like"}{" "}
+                  ({comment.likesCount || 0}) ({comment.likesCount || 0})
                 </button>
 
                 <div className="ml-8 space-y-3 mt-2">
@@ -273,15 +292,19 @@ export default function DisplayBlog() {
                           <button
                             onClick={() => handleLikeReply(comment._id, index)}
                             className={`text-xs ${
-                              reply.likedBy?.includes(userId)
+                              reply.likedBy?.some(
+                                (liker) => liker._id === userId
+                              )
                                 ? "text-red-600"
                                 : "text-gray-500"
                             } hover:underline`}
                           >
-                            {reply.likedBy?.includes(userId)
-                              ? "❤️ Unlike"
+                            {reply.likedBy?.some(
+                              (liker) => liker._id === userId
+                            )
+                              ? "❤️ liked"
                               : "🤍 Like"}{" "}
-                            ({reply.likes || 0})
+                            ({reply.likesCount || 0})
                           </button>
                         </div>
                       </div>
