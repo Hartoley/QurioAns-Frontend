@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const UsersBlog = ({ selectedTopic, onClearTopic }) => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const userId = localStorage.getItem("QurioUser");
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -33,7 +36,7 @@ const UsersBlog = ({ selectedTopic, onClearTopic }) => {
   }, [selectedTopic]);
 
   return (
-    <div className="sm:w-2/3 w-full min-h-screen p-4 sm:pb-8 overflow-y-auto scrollbar-hide">
+    <div className="sm:w-2/3 w-full sm:min-h-screen h-auto p-4 sm:pb-8 sm:overflow-y-auto scrollbar-hide">
       {/* Intro Section */}
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-black mb-1">
@@ -42,9 +45,9 @@ const UsersBlog = ({ selectedTopic, onClearTopic }) => {
         <p className="text-gray-900 text-sm mb-3">
           Explore insightful and thought-provoking blogs from our ever-growing
           community of curious minds. From deep dives into AI breakthroughs to
-          personal reflections, tutorials, and curated opinions — QurioAns
-          brings together the voices shaping tomorrow’s ideas. Discover, learn,
-          and get inspired — all in one place.
+          personal reflections, tutorials, and curated opinions QurioAns brings
+          together the voices shaping tomorrow’s ideas. Discover, learn, and get
+          inspired all in one place.
         </p>
 
         <div className="flex flex-wrap gap-3 items-center p-3">
@@ -79,11 +82,11 @@ const UsersBlog = ({ selectedTopic, onClearTopic }) => {
       </div>
 
       {/* Main Heading */}
-      <h1 className="text-2xl font-bold text-black mb-4">
+      <p className="text-2xl font-medium text-black mb-4">
         {selectedTopic
           ? `${selectedTopic} Contents`
           : "Trending selections for you"}
-      </h1>
+      </p>
 
       {/* Conditional Rendering */}
       {loading ? (
@@ -105,6 +108,9 @@ const UsersBlog = ({ selectedTopic, onClearTopic }) => {
           <div
             key={blog._id}
             className="flex flex-col sm:flex-row gap-4 bg-blatext-black rounded-lg p-4 shadow mb-6"
+            onClick={() =>
+              navigate(`/blog/${blog.title}/${blog._id}/${userId}`)
+            }
           >
             {/* LEFT: Textual content */}
             <div className="flex-1">

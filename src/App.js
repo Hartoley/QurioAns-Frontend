@@ -11,6 +11,7 @@ import Admin from "./Admin/Admin";
 import BlogEditor from "./Admin/Blog";
 import AdminLogin from "./Admin/AdminLogin";
 import CreateBlog from "./components/ui/CreateBlog";
+import DisplayBlog from "./components/ui/DisplayBlog";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/blog/:blogId" element={<BlogEditor />} />
         <Route path="/admin/dashboard/:adminId" element={<Admin />} />
         <Route path="/verifyotp/:userId" element={<Verify />} />
+        <Route path="/blog/:title/:id/:userId" element={<DisplayBlog />} />
       </Routes>
     </>
   );
