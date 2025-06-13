@@ -49,7 +49,7 @@ const Headers = () => {
                 transition={{ delay: 0.5 }}
               >
                 <p className="text-xl sm:text-2xl text-center font-bold mb-1">
-                  How Technology is Reshaping Our Lives
+                  How Technology is Reshaping Our daily Lives
                 </p>
               </motion.div>
               <motion.div
