@@ -10,6 +10,15 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const pathname = location.pathname;
+  const [user, setuser] = useState("");
+
+  useEffect(() => {
+    const user = localStorage.getItem("QurioUser");
+    if (user) {
+      setuser(user);
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const signin = async () => {
     navigate("/login");
@@ -28,12 +37,6 @@ export default function Navbar() {
   };
 
   // Check if QurioUser is in localStorage
-  useEffect(() => {
-    const user = localStorage.getItem("QurioUser");
-    if (user) {
-      setIsLoggedIn(true);
-    }
-  }, []);
 
   // Mobile menu items with their routes prepared for future use
   const mobileMenuItems = [
@@ -42,7 +45,7 @@ export default function Navbar() {
     { label: "Roadmaps", route: "/roadmaps" },
     { label: "Hotstar", route: "/hotstar" },
     { label: "Fitness", route: "/fitness" },
-    { label: "Blog", route: "/blog" },
+    { label: "Blog", route: `/dashboard/${user}` },
     { label: "Uncover", route: "/uncover" },
   ];
 
