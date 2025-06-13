@@ -96,8 +96,8 @@ const Hero = () => {
 
             // Truncate title to a maximum of 40 characters
             const truncatedTitle =
-              item.title.length > 40
-                ? `${item.title.substring(0, 40)}...`
+              item.title.length > 60
+                ? `${item.title.substring(0, 60)}...`
                 : item.title;
 
             return (
@@ -109,7 +109,7 @@ const Hero = () => {
                 transition={{ duration: 0.6, delay: i * 0.2 }}
                 viewport={{ once: true }}
               >
-                <div className="w-full h-40 bg-white/10 rounded-lg mb-4 overflow-hidden">
+                <div className="w-full h-44 bg-white/10 rounded-lg mb-4 overflow-hidden">
                   <img
                     src={imageUrl}
                     alt={item.title}
@@ -117,7 +117,7 @@ const Hero = () => {
                   />
                 </div>
                 <h3 className="text-lg font-bold mb-2">{truncatedTitle}</h3>
-                <p className="text-sm text-white/80 mb-4">{item.subtitle}</p>
+                <p className="text-sm text-white/80 mb-3">{item.subtitle}</p>
                 <button
                   onClick={() =>
                     handleNavigate(`/blog/${item.title}/${item._id}/${user}`)
