@@ -90,7 +90,29 @@ const UsersBlog = ({ selectedTopic, onClearTopic }) => {
 
       {/* Conditional Rendering */}
       {loading ? (
-        <p className="text-gray-400">Loading blogs...</p>
+        <div className="space-y-6 animate-pulse">
+          <p className="text-gray-400 text-lg font-medium">Loading blogs...</p>
+
+          {[...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className="bg-white p-6 rounded-xl shadow-sm flex flex-col gap-4"
+            >
+              <div className="h-48 bg-gray-200 rounded-xl w-full"></div>{" "}
+              {/* Image */}
+              <div className="h-6 bg-gray-300 rounded w-2/3"></div>{" "}
+              {/* Title */}
+              <div className="h-4 bg-gray-200 rounded w-full"></div>{" "}
+              {/* Body line 1 */}
+              <div className="h-4 bg-gray-200 rounded w-5/6"></div>{" "}
+              {/* Body line 2 */}
+              <div className="flex gap-3 mt-2">
+                <div className="h-4 w-20 bg-gray-200 rounded"></div> {/* Tag */}
+                <div className="h-4 w-16 bg-gray-200 rounded"></div> {/* Tag */}
+              </div>
+            </div>
+          ))}
+        </div>
       ) : blogs.length === 0 ? (
         <div className="text-center text-gray-300 mt-12 text-lg">
           No blogs found under <strong>{selectedTopic}</strong>

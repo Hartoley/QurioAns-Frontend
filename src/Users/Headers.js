@@ -1,8 +1,27 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/ui/Nav";
 import { motion } from "framer-motion";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Headers = () => {
+  const [user, setuser] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = localStorage.getItem("QurioUser");
+    if (user) {
+      setuser(user);
+    }
+  }, []);
+
+  const browseBlogs = () => {
+    if (user) {
+      navigate(`/dashboard/${user}`);
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <div className="relative w-full h-screen overflow-x-hidden overflow-y-auto">
       <div className="absolute bottom-0 left-0 w-full h-full -z-10">
@@ -30,7 +49,10 @@ const Headers = () => {
                 living that’s redefining how we experience the world.
               </p>
 
-              <button className="mt-4 bg-gradient-to-r from-pink-500 to-orange-400 px-4 py-2 rounded-full text-sm font-medium hover:opacity-45 transition">
+              <button
+                onClick={browseBlogs}
+                className="mt-4 bg-gradient-to-r from-pink-500 to-orange-400 px-4 py-2 rounded-full text-sm font-medium hover:opacity-45 transition"
+              >
                 Browse Blog
               </button>
             </motion.div>
