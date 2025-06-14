@@ -1,8 +1,9 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Pagination, Autoplay, Navigation } from "swiper/modules"; // ✅ Import Autoplay and Navigation
 import "swiper/css";
 import "swiper/css/pagination";
+import "swiper/css/navigation"; // ✅ Navigation styles
 
 const slides = [
   {
@@ -25,37 +26,31 @@ const slides = [
     title: "Interstellar",
     subtitle: "Sci-Fi · A journey beyond the stars.",
   },
-  ,
   {
     img: "https://i.pinimg.com/736x/0b/0f/a6/0b0fa6a186b3ad31acc69c3298ada50e.jpg",
     title: "Interstellar",
     subtitle: "Sci-Fi · A journey beyond the stars.",
   },
-  ,
   {
     img: "https://i.pinimg.com/736x/a2/b5/4d/a2b54d3416a7e3039a11a59275ef6645.jpg",
     title: "Interstellar",
     subtitle: "Sci-Fi · A journey beyond the stars.",
   },
-  ,
   {
     img: "https://i.pinimg.com/736x/96/0e/ee/960eeedd828ecc48fb6d9b45351d4e88.jpg",
     title: "Interstellar",
     subtitle: "Sci-Fi · A journey beyond the stars.",
   },
-  ,
   {
     img: "https://i.pinimg.com/736x/e5/12/ef/e512efeb5c054a08860b3d7f1e333fcd.jpg",
     title: "Interstellar",
     subtitle: "Sci-Fi · A journey beyond the stars.",
   },
-  ,
   {
     img: "https://i.pinimg.com/736x/75/39/38/7539380ec36371aa885c39ccc82190f0.jpg",
     title: "Interstellar",
     subtitle: "Sci-Fi · A journey beyond the stars.",
   },
-  ,
   {
     img: "https://i.pinimg.com/736x/53/d7/46/53d74649874ea6f29c1cacc7ba4f91be.jpg",
     title: "Interstellar",
@@ -66,23 +61,26 @@ const slides = [
 export default function HeroCarousel() {
   return (
     <div
+      className="bg-[rgb(13,10,52)]"
       style={{
         width: "100%",
-        padding: "2rem 0", // space top and bottom
+        padding: "2rem 1rem",
         boxSizing: "border-box",
-        overflow: "hidden", // prevent overflow
+        overflow: "hidden",
       }}
     >
       <Swiper
-        modules={[Pagination]}
+        modules={[Pagination, Autoplay, Navigation]} // ✅ Add modules
         spaceBetween={20}
         slidesPerView={"auto"}
         centeredSlides={true}
         pagination={{ clickable: true }}
+        navigation={true} // ✅ Enable navigation
+        autoplay={{ delay: 3000, disableOnInteraction: false }} // ✅ Enable autoplay
         loop={true}
         style={{
           height: "55vh",
-          padding: "0 3vw", // side padding for peek
+          padding: "0 3vw",
         }}
       >
         {slides.map((slide, index) => (
@@ -132,7 +130,7 @@ export default function HeroCarousel() {
                   cursor: "pointer",
                 }}
               >
-                Stream now
+                Explore now
               </button>
             </div>
           </SwiperSlide>
@@ -156,6 +154,19 @@ export default function HeroCarousel() {
           background: white;
           border: 2px solid #fff;
           transform: scale(1.2);
+        }
+
+        .swiper-button-next,
+        .swiper-button-prev {
+          color: white;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+
+        .swiper-button-next::after,
+        .swiper-button-prev::after {
+          font-size: 24px;
+          font-weight: bold;
         }
       `}</style>
     </div>

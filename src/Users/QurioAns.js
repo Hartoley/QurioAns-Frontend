@@ -9,8 +9,8 @@ const QurioAns = () => {
   return (
     <>
       <Headers />
-      <Hero />
       <BlogCarousel />
+      <Hero />
       <Footer />
     </>
   );

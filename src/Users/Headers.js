@@ -35,7 +35,7 @@ const Headers = () => {
       <div className="relative w-full h-full bg-[rgb(6,4,52)] bg-opacity-95">
         <Navbar />
         <section className="h-[90%] w-full pt-20 sm:px-20 bg-gradient-to-br from-[rgb(5,4,48)] to-[#202566] text-white font-sans flex items-center justify-center">
-          <div className="sm:w-3/4 w-full bg-white/5 backdrop-blur-lg h-full p-3 rounded-lg flex sm:flex-row justify-center sm:justify-between items-center shadow-lg flex-col gap-5 sm:gap-0">
+          <div className="w-full bg-white/5 backdrop-blur-lg h-full p-3 rounded-lg flex sm:flex-row justify-center sm:justify-between items-center shadow-lg flex-col gap-5 sm:gap-0">
             <motion.div
               className="bg-white/10 sm:w-2/6 p-4 sm:h-full h-2/3 rounded-lg shadow-lg w-full flex flex-col items-center justify-center gap-2"
               initial={{ opacity: 0, x: -50 }}

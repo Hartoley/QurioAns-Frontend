@@ -35,8 +35,8 @@ const Hero = () => {
 
   if (loading) {
     return (
-      <section className="z-20 sm:px-20 min-h-screen px-6 py-20 bg-gradient-to-br from-[rgb(5,4,48)] to-[#202566] text-white font-sans">
-        <div className="max-w-7xl mx-auto">
+      <section className="z-20 sm:px-0 min-h-screen px-6 py-20 bg-gradient-to-br from-[rgb(5,4,48)] to-[#202566] text-white font-sans">
+        <div className="max-w-9xl mx-auto">
           <div className="mb-10 text-center">
             <h1 className="text-xl md:text-4xl text-pink-500 font-bold mb-4">
               Explore Our Latest Blog Posts
