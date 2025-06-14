@@ -1,9 +1,11 @@
-import React from "react";
+import { React, useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Autoplay, Navigation } from "swiper/modules"; // ✅ Import Autoplay and Navigation
+import { Pagination, Autoplay, Navigation } from "swiper/modules";
+import { useLocation, useNavigate } from "react-router-dom";
 import "swiper/css";
 import "swiper/css/pagination";
-import "swiper/css/navigation"; // ✅ Navigation styles
+import "swiper/css/navigation";
+import "./slider.css";
 
 const slides = [
   {
@@ -59,6 +61,24 @@ const slides = [
 ];
 
 export default function HeroCarousel() {
+  const [user, setuser] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = localStorage.getItem("QurioUser");
+    if (user) {
+      setuser(user);
+    }
+  }, []);
+
+  const handleNavigate = () => {
+    if (user) {
+      navigate(`/dashboard/${user}`);
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <div
       className="bg-[rgb(13,10,52)]"
@@ -70,13 +90,13 @@ export default function HeroCarousel() {
       }}
     >
       <Swiper
-        modules={[Pagination, Autoplay, Navigation]} // ✅ Add modules
+        modules={[Pagination, Autoplay, Navigation]}
         spaceBetween={20}
         slidesPerView={"auto"}
         centeredSlides={true}
         pagination={{ clickable: true }}
-        navigation={true} // ✅ Enable navigation
-        autoplay={{ delay: 5000, disableOnInteraction: false }} // ✅ Enable autoplay
+        navigation={true}
+        autoplay={{ delay: 5000, disableOnInteraction: false }}
         speed={1500}
         loop={true}
         style={{
@@ -96,6 +116,7 @@ export default function HeroCarousel() {
               backgroundColor: "#000",
               flexShrink: 0,
             }}
+            className="slide-item"
           >
             <img
               src={slide.img}
@@ -106,33 +127,10 @@ export default function HeroCarousel() {
                 filter: "brightness(0.7)",
               }}
             />
-            <div
-              style={{
-                position: "absolute",
-                bottom: "2rem",
-                left: "2rem",
-                color: "#fff",
-              }}
-            >
-              <h2 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>
-                {slide.title}
-              </h2>
-              <p style={{ fontSize: "1rem", marginBottom: "1rem" }}>
-                {slide.subtitle}
-              </p>
-              <button
-                style={{
-                  padding: "0.5rem 1.2rem",
-                  borderRadius: "999px",
-                  backgroundColor: "#fff",
-                  color: "#000",
-                  border: "none",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-              >
-                Explore now
-              </button>
+            <div className="slide-content">
+              <h2>{slide.title}</h2>
+              <p>{slide.subtitle}</p>
+              <button onClick={() => handleNavigate()}>Explore now</button>
             </div>
           </SwiperSlide>
         ))}
@@ -156,18 +154,62 @@ export default function HeroCarousel() {
           border: 2px solid #fff;
           transform: scale(1.2);
         }
-
         .swiper-button-next,
         .swiper-button-prev {
           color: white;
           top: 50%;
           transform: translateY(-50%);
         }
-
         .swiper-button-next::after,
         .swiper-button-prev::after {
           font-size: 24px;
           font-weight: bold;
+        }
+
+        .slide-content {
+          position: absolute;
+          bottom: 2rem;
+          left: 2rem;
+          color: #fff;
+        }
+        .slide-content h2 {
+          font-size: 2rem;
+          margin-bottom: 0.5rem;
+        }
+        .slide-content p {
+          font-size: 1rem;
+          margin-bottom: 1rem;
+        }
+        .slide-content button {
+          padding: 0.5rem 1.2rem;
+          border-radius: 999px;
+          background-color: #fff;
+          color: #000;
+          border: none;
+          font-weight: bold;
+          cursor: pointer;
+        }
+      
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+          .swiper-slide {
+            width: 100vw !important; /* full viewport width */
+          }
+          .slide-content h2 {
+            font-size: 1.2rem !important;
+          }
+          .slide-content p {
+            font-size: 0.8rem !important;
+          }
+          .slide-content button {
+            padding: 0.4rem 1rem !important;
+            font-size: 0.8rem !important;
+          }
+          /* Optional: reduce swiper container horizontal padding */
+          .swiper {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+          }
         }
       `}</style>
     </div>
