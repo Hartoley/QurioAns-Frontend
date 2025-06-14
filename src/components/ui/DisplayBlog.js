@@ -5,8 +5,11 @@ import DashNav from "./DashNav";
 import Footer from "./Footer";
 import UserDash from "../../Users/UserDash";
 import { FaHeart, FaRegHeart, FaCommentDots, FaTimes } from "react-icons/fa";
+import io from "socket.io-client";
 
-export default function DisplayBlog() {
+const socket = io("https://qurioans.onrender.com");
+
+export default function DisplayBlog({ Home }) {
   const { id } = useParams();
   const [blog, setBlog] = useState(null);
   const [commentInput, setCommentInput] = useState("");
@@ -21,12 +24,57 @@ export default function DisplayBlog() {
           `https://qurioans.onrender.com/getblog/${id}`
         );
         setBlog(response.data);
-        console.log(blog);
       } catch (err) {
         console.error(err);
       }
     };
+
     fetchBlog();
+
+    const handleBlogCreated = (newData) => {
+      console.log("📝 Blog created:", newData);
+      setBlog(newData);
+    };
+
+    const handleBlogLiked = (data) => {
+      console.log(
+        `❤️ Blog liked | Blog ID: ${data.blogId}, User ID: ${data.userId}`
+      );
+    };
+
+    const handleCommentAdded = (data) => {
+      console.log(`💬 Comment added on Blog ${data.blogId}:`, data.comment);
+    };
+
+    const handleCommentLiked = (data) => {
+      console.log(`👍 Comment liked: ${data.commentId} on blog ${data.blogId}`);
+    };
+
+    const handleReplyAdded = (data) => {
+      console.log(`↩️ Reply added to comment ${data.commentId}:`, data.reply);
+    };
+
+    const handleReplyLiked = (data) => {
+      console.log(
+        `🔥 Reply liked at index ${data.replyIndex} on comment ${data.commentId}`
+      );
+    };
+
+    socket.on("blogCreated", handleBlogCreated);
+    socket.on("blogLiked", handleBlogLiked);
+    socket.on("commentAdded", handleCommentAdded);
+    socket.on("commentLiked", handleCommentLiked);
+    socket.on("replyAdded", handleReplyAdded);
+    socket.on("replyLiked", handleReplyLiked);
+
+    return () => {
+      socket.off("blogCreated", handleBlogCreated);
+      socket.off("blogLiked", handleBlogLiked);
+      socket.off("commentAdded", handleCommentAdded);
+      socket.off("commentLiked", handleCommentLiked);
+      socket.off("replyAdded", handleReplyAdded);
+      socket.off("replyLiked", handleReplyLiked);
+    };
   }, [id]);
 
   const handleLike = async () => {
@@ -128,7 +176,7 @@ export default function DisplayBlog() {
   if (!blog) {
     return (
       <>
-        <DashNav />
+        <DashNav Home={Home} />
         <div
           className="mt-16 max-w-4xl mx-auto px-6 animate-pulse pb-44"
           role="status"

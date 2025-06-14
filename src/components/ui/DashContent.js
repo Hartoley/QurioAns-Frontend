@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import SideNav from "./SideNav";
 import UsersBlog from "./UsersBlog";
 
-const DashContent = () => {
+const DashContent = ({ Home }) => {
   const navigate = useNavigate();
   const { QurioUser } = useParams();
   const [blogs, setBlogs] = useState([]);
@@ -112,8 +112,9 @@ const DashContent = () => {
         <UsersBlog
           selectedTopic={selectedTopic}
           onClearTopic={() => setSelectedTopic(null)}
+          Home={Home}
         />
-        <SideNav onTopicClick={setSelectedTopic} />
+        <SideNav onTopicClick={setSelectedTopic} Home={Home} />
       </div>
     </>
   );

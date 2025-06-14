@@ -12,7 +12,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-const DashNav = () => {
+const DashNav = ({ Home }) => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -68,7 +68,9 @@ const DashNav = () => {
     <header className="fixed top-0 left-0 w-full z-40 bg-[rgb(6,4,52)] text-white shadow-md">
       <nav className="flex items-center justify-between px-4 md:px-8 py-3 h-16">
         {/* Brand */}
-        <div className="text-2xl font-bold">QurioAns</div>
+        <div onClick={Home} className="text-2xl font-bold">
+          QurioAns
+        </div>
 
         {/* Desktop Search */}
         <div className="hidden md:flex items-center bg-white/10 rounded-full px-4 py-2 w-full max-w-md">

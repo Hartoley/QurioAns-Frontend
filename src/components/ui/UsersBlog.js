@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const UsersBlog = ({ selectedTopic, onClearTopic }) => {
+const UsersBlog = ({ selectedTopic, onClearTopic, Home }) => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();

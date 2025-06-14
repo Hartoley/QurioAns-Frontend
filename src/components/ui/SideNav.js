@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const topics = [
   "Technology",
@@ -37,6 +38,8 @@ const SideNav = ({ onTopicClick }) => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const userId = localStorage.getItem("QurioUser");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -81,7 +84,12 @@ const SideNav = ({ onTopicClick }) => {
             </div>
 
             {/* Title */}
-            <h3 className="text-[16px] font-bold leading-tight text-gray-900 hover:underline cursor-pointer">
+            <h3
+              onClick={() =>
+                navigate(`/blog/${blog.title}/${blog._id}/${userId}`)
+              }
+              className="text-[16px] font-bold leading-tight text-gray-900 hover:underline cursor-pointer"
+            >
               {blog.title}
             </h3>
 

@@ -67,7 +67,7 @@ const quillFormats = [
   "video",
 ];
 
-const BlogEditor = () => {
+const BlogEditor = ({}) => {
   const { blogId } = useParams();
   const adminId = localStorage.getItem("adminId");
   const [updating, setUpdating] = useState(false);
