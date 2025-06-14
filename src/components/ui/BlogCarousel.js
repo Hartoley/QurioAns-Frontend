@@ -8,53 +8,53 @@ import "swiper/css/navigation"; // ✅ Navigation styles
 const slides = [
   {
     img: "https://i.pinimg.com/736x/2d/92/a7/2d92a7b405b63cf2d1335a74918149c6.jpg",
-    title: "Ted Lasso",
-    subtitle: "Comedy · Kindness makes a comeback.",
+    title: "Mindset",
+    subtitle: "Daily focus & personal growth",
   },
   {
     img: "https://i.pinimg.com/736x/18/4d/86/184d86bc9b8e7a11071eedd29c7d1247.jpg",
-    title: "Planet Earth",
-    subtitle: "Documentary · Explore our world.",
+    title: "Planet",
+    subtitle: "Eco living & sustainability",
   },
   {
     img: "https://i.pinimg.com/736x/b2/60/31/b2603141251d7682aefbe218972d6097.jpg",
-    title: "Edge of Tomorrow",
-    subtitle: "Action · Live. Die. Repeat.",
+    title: "Lifestyle",
+    subtitle: "Bold moves & energy",
   },
   {
     img: "https://i.pinimg.com/736x/23/ef/6c/23ef6c7446508de2e83292f020bfea10.jpg",
-    title: "Interstellar",
-    subtitle: "Sci-Fi · A journey beyond the stars.",
+    title: "Explorer",
+    subtitle: "Adventure & wild escapes",
   },
   {
     img: "https://i.pinimg.com/736x/0b/0f/a6/0b0fa6a186b3ad31acc69c3298ada50e.jpg",
-    title: "Interstellar",
-    subtitle: "Sci-Fi · A journey beyond the stars.",
+    title: "Dreamspace",
+    subtitle: "Vision, goals & big ideas",
   },
   {
     img: "https://i.pinimg.com/736x/a2/b5/4d/a2b54d3416a7e3039a11a59275ef6645.jpg",
-    title: "Interstellar",
-    subtitle: "Sci-Fi · A journey beyond the stars.",
+    title: "Design",
+    subtitle: "Style, shapes & function",
   },
   {
     img: "https://i.pinimg.com/736x/96/0e/ee/960eeedd828ecc48fb6d9b45351d4e88.jpg",
-    title: "Interstellar",
-    subtitle: "Sci-Fi · A journey beyond the stars.",
+    title: "Motion",
+    subtitle: "Speed, power & fluidity",
   },
   {
     img: "https://i.pinimg.com/736x/e5/12/ef/e512efeb5c054a08860b3d7f1e333fcd.jpg",
-    title: "Interstellar",
-    subtitle: "Sci-Fi · A journey beyond the stars.",
+    title: "Vibes",
+    subtitle: "Night feel & ambiance",
   },
   {
     img: "https://i.pinimg.com/736x/75/39/38/7539380ec36371aa885c39ccc82190f0.jpg",
-    title: "Interstellar",
-    subtitle: "Sci-Fi · A journey beyond the stars.",
+    title: "Calm",
+    subtitle: "Balance & mental space",
   },
   {
     img: "https://i.pinimg.com/736x/53/d7/46/53d74649874ea6f29c1cacc7ba4f91be.jpg",
-    title: "Interstellar",
-    subtitle: "Sci-Fi · A journey beyond the stars.",
+    title: "Minimal",
+    subtitle: "Clean visuals, clear mind",
   },
 ];
 
@@ -76,7 +76,8 @@ export default function HeroCarousel() {
         centeredSlides={true}
         pagination={{ clickable: true }}
         navigation={true} // ✅ Enable navigation
-        autoplay={{ delay: 3000, disableOnInteraction: false }} // ✅ Enable autoplay
+        autoplay={{ delay: 5000, disableOnInteraction: false }} // ✅ Enable autoplay
+        speed={1500}
         loop={true}
         style={{
           height: "55vh",
