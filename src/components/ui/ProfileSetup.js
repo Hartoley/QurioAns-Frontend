@@ -4,6 +4,50 @@ import axios from "axios";
 import DashNav from "./DashNav";
 import Footer from "./Footer";
 
+const SpinnerLoader = () => (
+  <div className="flex justify-center items-center min-h-screen">
+    <div className="w-16 h-16 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+  </div>
+);
+
+const SkeletonBlock = ({ className }) => (
+  <div
+    className={`bg-gray-300 animate-pulse rounded ${className}`}
+    aria-hidden="true"
+  />
+);
+
+const SkeletonLoader = () => (
+  <>
+    <DashNav skeleton />
+    <main className="max-w-5xl mt-16 mx-auto px-4 py-10 bg-gray-100">
+      <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">
+        <div className="flex flex-col md:flex-row md:space-x-6">
+          {/* Sidebar skeleton */}
+          <div className="md:w-1/3 flex flex-col items-center space-y-4">
+            <SkeletonBlock className="w-24 h-24 rounded-full" />
+            <SkeletonBlock className="w-32 h-6" />
+            <SkeletonBlock className="w-40 h-4" />
+            <SkeletonBlock className="w-full h-8 mt-4 rounded-lg" />
+          </div>
+          {/* Form skeleton */}
+          <div className="mt-8 md:mt-0 md:flex-1 space-y-6">
+            <SkeletonBlock className="h-8 w-40 mb-6" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <SkeletonBlock className="h-12 w-full" />
+              <SkeletonBlock className="h-12 w-full" />
+              <SkeletonBlock className="h-12 w-full" />
+              <SkeletonBlock className="h-12 w-full" />
+            </div>
+            <SkeletonBlock className="h-12 w-1/3 rounded-lg mt-8" />
+          </div>
+        </div>
+      </div>
+    </main>
+    <Footer skeleton />
+  </>
+);
+
 const ProfileSetup = () => {
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
@@ -42,7 +86,7 @@ const ProfileSetup = () => {
     };
 
     fetchUserData();
-  }, [userId]);
+  }, [userId, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -76,7 +120,7 @@ const ProfileSetup = () => {
     }
   };
 
-  if (loading) return <div className="text-center mt-10">Loading...</div>;
+  if (loading) return <SkeletonLoader />;
 
   return (
     <>
