@@ -12,10 +12,12 @@ import BlogEditor from "./Admin/Blog";
 import AdminLogin from "./Admin/AdminLogin";
 import CreateBlog from "./components/ui/CreateBlog";
 import DisplayBlog from "./components/ui/DisplayBlog";
+import ScrollToTop from "./components/ui/ScrollToTop";
 
 function App() {
   return (
     <>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<QurioAns />} />
         <Route path="/login" element={<Login />} />

@@ -119,7 +119,7 @@ const UsersBlog = ({ selectedTopic, onClearTopic, Home }) => {
           <div className="mt-6">
             <button
               onClick={onClearTopic}
-              className="bg-[rgb(6,4,52)] hover:bg-[rgba(6,4,52,0.84)] text-black text-sm px-4 py-2 rounded"
+              className="bg-[rgb(6,4,52)] text-white hover:bg-[rgba(6,4,52,0.84)] text-black text-sm px-4 py-2 rounded"
             >
               Go Back to All Blogs
             </button>

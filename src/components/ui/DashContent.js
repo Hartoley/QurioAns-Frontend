@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import SideNav from "./SideNav";
 import UsersBlog from "./UsersBlog";
+import { scrollToTop } from "react-scroll/modules/mixins/animate-scroll";
 
 const DashContent = ({ Home }) => {
   const navigate = useNavigate();
@@ -108,7 +109,7 @@ const DashContent = ({ Home }) => {
 
   return (
     <>
-      <div className="flex w-full h-auto items-start overflow-y-scroll scrollbar-hide sm:px-10 pt-20 py-8 sm:flex-row flex-col">
+      <div className="flex w-full h-auto items-start overflow-y-scroll scrollbar-hide sm:px-10 pt-20 py-8 sm:flex-row flex-col-reverse">
         <UsersBlog
           selectedTopic={selectedTopic}
           onClearTopic={() => setSelectedTopic(null)}
