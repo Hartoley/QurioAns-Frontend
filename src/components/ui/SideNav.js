@@ -58,8 +58,8 @@ const SideNav = ({ onTopicClick }) => {
   }, []);
 
   return (
-    <div className="sm:w-1/3 w-[95%] sm:max-h-full h-auto rounded-md border border-[rgb(6,4,52)] bg-white px-6 py-8 sm:overflow-y-auto text-black text-[15px] font-sans scrollbar-hide">
-      <h2 className="text-lg font-semibold mb-6 text-gray-900">Staff Picks</h2>
+    <div className="sm:w-1/3 w-[95%] sm:h-[150vh] sm:max-h-full h-auto rounded-md border border-[rgb(6,4,52)] bg-white px-6 py-8 sm:overflow-y-auto scrollbar-hide text-black text-[15px] font-sans scrollbar-hide">
+      <h2 className="text-lg font-semibold mb-6 text-gray-900">Top Picks</h2>
 
       {loading && <p className="text-gray-500">Loading...</p>}
       {error && <p className="text-red-500">Error: {error}</p>}

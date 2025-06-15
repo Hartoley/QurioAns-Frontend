@@ -109,7 +109,7 @@ const DashContent = ({ Home }) => {
 
   return (
     <>
-      <div className="flex w-full h-auto items-start overflow-y-scroll scrollbar-hide sm:px-10 pt-20 py-8 sm:flex-row flex-col-reverse">
+      <div className="flex w-full sm:h-[200vh] items-start  sm:px-10 pt-20 py-8 sm:flex-row flex-col-reverse">
         <UsersBlog
           selectedTopic={selectedTopic}
           onClearTopic={() => setSelectedTopic(null)}

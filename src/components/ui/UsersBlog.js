@@ -36,7 +36,7 @@ const UsersBlog = ({ selectedTopic, onClearTopic, Home }) => {
   }, [selectedTopic]);
 
   return (
-    <div className="sm:w-2/3 w-full sm:min-h-screen h-auto p-4 sm:pb-8 sm:overflow-y-auto scrollbar-hide">
+    <div className="sm:w-2/3 w-full h-auto sm:h-[150vh] sm:max-h-full p-4 sm:pb-8 sm:overflow-y-auto scrollbar-hide">
       {/* Intro Section */}
       <div className="mb-6">
         <h2 className="text-xl font-bold text-black mb-1">

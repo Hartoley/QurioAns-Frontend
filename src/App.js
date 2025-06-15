@@ -7,6 +7,7 @@ import VerifyOtp from "./components/ui/VerifyOtp";
 import Verify from "./Users/Verify";
 import UserDash from "./Users/UserDash";
 import AdminDash from "./components/ui/AdminDash";
+import ProfileSetup from "./components/ui/ProfileSetup";
 import Admin from "./Admin/Admin";
 import BlogEditor from "./Admin/Blog";
 import AdminLogin from "./Admin/AdminLogin";
@@ -32,6 +33,7 @@ function App() {
         <Route path="/blog/:blogId" element={<BlogEditor />} />
         <Route path="/admin/dashboard/:adminId" element={<Admin />} />
         <Route path="/verifyotp/:userId" element={<Verify />} />
+        <Route path="/profile/:userId" element={<ProfileSetup/>} />
         <Route path="/blog/:title/:id/:userId" element={<DisplayBlog />} />
       </Routes>
     </>
