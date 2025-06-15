@@ -49,7 +49,8 @@ const SkeletonLoader = () => (
   </>
 );
 
-const ProfileSetup = ({ Home }) => {
+const ProfileSetup = () => {
+  const naviget = useNavigate();
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -63,6 +64,10 @@ const ProfileSetup = ({ Home }) => {
   const [updating, setUpdating] = useState(false);
   const navigate = useNavigate();
   const userId = localStorage.getItem("QurioUser");
+
+  const Home = () => {
+    navigate(`/dashboard/${userId}`);
+  };
 
   useEffect(() => {
     if (!userId) return navigate("/login");

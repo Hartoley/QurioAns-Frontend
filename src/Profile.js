@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 import DashNav from "./components/ui/DashNav";
 import Footer from "./components/ui/Footer";
+import { useNavigate } from "react-router-dom";
 
-const ProfileDetails = ({ Home }) => {
+const ProfileDetails = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const userId = localStorage.getItem("QurioUser");
+  const navigate = useNavigate();
+
+  const Home = () => {
+    navigate(`/dashboard/${userId}`);
+  };
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -53,7 +59,7 @@ const ProfileDetails = ({ Home }) => {
   if (error) {
     return (
       <>
-        <DashNav Home={Home} />
+        <DashNav />
         <div className="max-w-4xl min-h-80 mx-auto p-8 mt-16">
           <p className="text-red-500">{error}</p>
         </div>
@@ -71,7 +77,7 @@ const ProfileDetails = ({ Home }) => {
 
   return (
     <>
-      <DashNav />
+      <DashNav Home={Home} />
       <main className="max-w-4xl mx-auto p-8 mt-16 bg-white rounded-lg shadow-lg">
         <div className="flex flex-col items-center">
           <img
