@@ -4,9 +4,10 @@ import axios from "axios";
 import DashNav from "./DashNav";
 import Footer from "./Footer";
 
-const SpinnerLoader = () => (
-  <div className="flex justify-center items-center min-h-screen">
-    <div className="w-16 h-16 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+const InlineLoader = () => (
+  <div className="flex items-center">
+    <div className="w-4 h-4 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin mr-2" />
+    <span className="text-gray-700">Updating...</span>
   </div>
 );
 
@@ -20,8 +21,8 @@ const SkeletonBlock = ({ className }) => (
 const SkeletonLoader = () => (
   <>
     <DashNav skeleton />
-    <main className="max-w-5xl mt-16 mx-auto px-4 py-10 bg-gray-100">
-      <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">
+    <main className="max-w-5xl mt-16 mx-auto px-4 py-10 bg-gray-100 bg-opacity-60 backdrop-blur-sm rounded-lg">
+      <div className="bg-white bg-opacity-40 rounded-lg shadow-lg p-6 md:p-8">
         <div className="flex flex-col md:flex-row md:space-x-6">
           {/* Sidebar skeleton */}
           <div className="md:w-1/3 flex flex-col items-center space-y-4">
@@ -59,6 +60,7 @@ const ProfileSetup = () => {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [avatar, setAvatar] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
   const navigate = useNavigate();
   const userId = localStorage.getItem("QurioUser");
 
@@ -71,7 +73,6 @@ const ProfileSetup = () => {
           `https://qurioans.onrender.com/qurioans/getuser/${userId}`
         );
         setUser(res.data.data);
-
         setFormData({
           firstName: res.data.data.firstName || "",
           lastName: res.data.data.lastName || "",
@@ -101,11 +102,16 @@ const ProfileSetup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setUpdating(true);
     const submitData = new FormData();
-    Object.entries(formData).forEach(([key, val]) =>
-      submitData.append(key, val)
-    );
+    Object.entries(formData).forEach(([key, val]) => {
+      if (val) {
+        submitData.append(key, val);
+      }
+    });
     if (avatar) submitData.append("image", avatar);
+
+    console.log("Submitting data:", submitData);
 
     try {
       const res = await axios.put(
@@ -117,6 +123,8 @@ const ProfileSetup = () => {
     } catch (err) {
       alert("Update failed");
       console.error(err);
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -220,7 +228,7 @@ const ProfileSetup = () => {
                 type="submit"
                 className="px-6 py-2 bg-[rgb(6,4,52)] text-white rounded-lg hover:opacity-90 transition"
               >
-                Save Changes
+                {updating ? <InlineLoader /> : "Save Changes"}
               </button>
             </div>
           </form>
