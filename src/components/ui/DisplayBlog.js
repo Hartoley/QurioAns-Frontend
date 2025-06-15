@@ -16,6 +16,7 @@ export default function DisplayBlog({ Home }) {
   const [replyInputs, setReplyInputs] = useState({});
   const [showLikers, setShowLikers] = useState(null);
   const userId = localStorage.getItem("QurioUser");
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -31,49 +32,99 @@ export default function DisplayBlog({ Home }) {
 
     fetchBlog();
 
-    const handleBlogCreated = (newData) => {
-      console.log("📝 Blog created:", newData);
-      setBlog(newData);
-    };
+    // Check initial connection status
+    setIsConnected(socket.connected);
 
-    const handleBlogLiked = (data) => {
+    // Listen for connection events
+    socket.on("connect", () => {
+      setIsConnected(true);
+      console.log("Socket connected");
+    });
+
+    socket.on("disconnect", () => {
+      setIsConnected(false);
+      console.log("Socket disconnected");
+    });
+
+    // Listen for serverStarted event
+    socket.on("serverStarted", (data) => {
+      console.log(data.message);
+    });
+
+    // Listen for userUpdated event
+    socket.on("userUpdated", (data) => {
+      console.log("User  updated event received:", data);
+    });
+
+    // Listen for blogCreated event
+    socket.on("blogCreated", (blog) => {
+      console.log("📝 Blog created:", blog);
+      setBlog(blog); // Update the blog state if necessary
+    });
+
+    // Listen for userFound event
+    socket.on("userFound", (data) => {
+      console.log("User  found event received:", data);
+    });
+
+    // Listen for adminUpdated event
+    socket.on("adminUpdated", (data) => {
+      console.log("Admin update event received:", data);
+    });
+
+    // Listen for commentAdded event
+    socket.on("commentAdded", (data) => {
+      console.log(`💬 Comment added to blog ID: ${data.blogId}`);
+    });
+
+    // Listen for blogLiked event
+    socket.on("blogLiked", (data) => {
       console.log(
-        `❤️ Blog liked | Blog ID: ${data.blogId}, User ID: ${data.userId}`
+        `❤️ Blog ID: ${data.blogId} liked by user ID: ${data.userId}`
       );
-    };
+    });
 
-    const handleCommentAdded = (data) => {
-      console.log(`💬 Comment added on Blog ${data.blogId}:`, data.comment);
-    };
+    // Listen for blogUpdated event
+    socket.on("blogUpdated", (data) => {
+      console.log(`Updated Blog ID: ${data.title}`);
+    });
 
-    const handleCommentLiked = (data) => {
-      console.log(`👍 Comment liked: ${data.commentId} on blog ${data.blogId}`);
-    };
-
-    const handleReplyAdded = (data) => {
-      console.log(`↩️ Reply added to comment ${data.commentId}:`, data.reply);
-    };
-
-    const handleReplyLiked = (data) => {
+    // Listen for replyAdded event
+    socket.on("replyAdded", (data) => {
       console.log(
-        `🔥 Reply liked at index ${data.replyIndex} on comment ${data.commentId}`
+        `↩️ Reply added to comment ID: ${data.commentId} on blog ID: ${data.blogId}`
       );
-    };
+    });
 
-    socket.on("blogCreated", handleBlogCreated);
-    socket.on("blogLiked", handleBlogLiked);
-    socket.on("commentAdded", handleCommentAdded);
-    socket.on("commentLiked", handleCommentLiked);
-    socket.on("replyAdded", handleReplyAdded);
-    socket.on("replyLiked", handleReplyLiked);
+    // Listen for commentLiked event
+    socket.on("commentLiked", (data) => {
+      console.log(
+        `👍 Comment ID: ${data.commentId} on blog ID: ${data.blogId} liked by user ID: ${data.userId}`
+      );
+    });
 
+    // Listen for replyLiked event
+    socket.on("replyLiked", (data) => {
+      console.log(
+        `🔥 Reply at index: ${data.replyIndex} on comment ID: ${data.commentId} liked by user ID: ${data.userId}`
+      );
+    });
+
+    // Cleanup function
     return () => {
-      socket.off("blogCreated", handleBlogCreated);
-      socket.off("blogLiked", handleBlogLiked);
-      socket.off("commentAdded", handleCommentAdded);
-      socket.off("commentLiked", handleCommentLiked);
-      socket.off("replyAdded", handleReplyAdded);
-      socket.off("replyLiked", handleReplyLiked);
+      socket.off("connect");
+      socket.off("disconnect");
+      socket.off("serverStarted");
+      socket.off("userUpdated");
+      socket.off("blogCreated");
+      socket.off("userFound");
+      socket.off("adminUpdated");
+      socket.off("commentAdded");
+      socket.off("blogLiked");
+      socket.off("blogUpdated");
+      socket.off("replyAdded");
+      socket.off("commentLiked");
+      socket.off("replyLiked");
     };
   }, [id]);
 
@@ -178,7 +229,7 @@ export default function DisplayBlog({ Home }) {
       <>
         <DashNav Home={Home} />
         <div
-          className="mt-16 max-w-4xl mx-auto px-6 animate-pulse pb-44"
+          className="mt-20 max-w-4xl mx-auto px-6 animate-pulse pb-44"
           role="status"
           aria-label="Loading blog content"
         >
