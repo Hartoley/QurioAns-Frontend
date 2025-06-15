@@ -68,7 +68,7 @@ const DashNav = ({ Home }) => {
     <header className="fixed top-0 left-0 w-full z-40 bg-[rgb(6,4,52)] text-white shadow-md">
       <nav className="flex items-center justify-between px-4 md:px-8 py-3 h-16">
         {/* Brand */}
-        <div onClick={Home} className="text-2xl font-bold">
+        <div onClick={Home} className="cursor-pointer text-2xl font-bold">
           QurioAns
         </div>
 

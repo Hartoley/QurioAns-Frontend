@@ -49,7 +49,7 @@ const SkeletonLoader = () => (
   </>
 );
 
-const ProfileSetup = () => {
+const ProfileSetup = ({ Home }) => {
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -132,7 +132,7 @@ const ProfileSetup = () => {
 
   return (
     <>
-      <DashNav />
+      <DashNav Home={Home} />
       <div className="flex mt-14 justify-center items-start min-h-screen px-4 py-10 bg-[rgb(240,245,255)]">
         <div className="bg-white w-full max-w-5xl rounded-lg shadow-xl flex flex-col md:flex-row overflow-hidden">
           {/* Sidebar */}

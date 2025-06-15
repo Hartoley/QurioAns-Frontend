@@ -14,6 +14,8 @@ import AdminLogin from "./Admin/AdminLogin";
 import CreateBlog from "./components/ui/CreateBlog";
 import DisplayBlog from "./components/ui/DisplayBlog";
 import ScrollToTop from "./components/ui/ScrollToTop";
+import Profile from "./Profile";
+import ProfileDetails from "./Profile";
 
 function App() {
   return (
@@ -33,7 +35,8 @@ function App() {
         <Route path="/blog/:blogId" element={<BlogEditor />} />
         <Route path="/admin/dashboard/:adminId" element={<Admin />} />
         <Route path="/verifyotp/:userId" element={<Verify />} />
-        <Route path="/profile/:userId" element={<ProfileSetup/>} />
+        <Route path="/settings" element={<ProfileSetup />} />
+        <Route path="/profile/:userId" element={<ProfileDetails />} />
         <Route path="/blog/:title/:id/:userId" element={<DisplayBlog />} />
       </Routes>
     </>
