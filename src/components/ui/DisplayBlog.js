@@ -332,9 +332,9 @@ export default function DisplayBlog({ Home }) {
                   } hover:underline`}
                 >
                   {comment.likedBy?.some((liker) => liker._id === userId)
-                    ? "❤️ liked"
-                    : "🤍 Like"}{" "}
-                  ({comment.likesCount || 0}) ({comment.likesCount || 0})
+                    ? "❤️"
+                    : "🤍"}{" "}
+                  ({comment.likesCount || 0})
                 </button>
 
                 <div className="ml-8 space-y-3 mt-2">
@@ -373,8 +373,8 @@ export default function DisplayBlog({ Home }) {
                             {reply.likedBy?.some(
                               (liker) => liker._id === userId
                             )
-                              ? "❤️ liked"
-                              : "🤍 Like"}{" "}
+                              ? "❤️"
+                              : "🤍"}{" "}
                             ({reply.likesCount || 0})
                           </button>
                         </div>
