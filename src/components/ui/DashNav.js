@@ -11,9 +11,13 @@ import {
 } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import io from "socket.io-client";
+
+const socket = io("https://qurioans.onrender.com");
 
 const DashNav = ({ Home }) => {
   const { userId } = useParams();
+  const [isConnected, setIsConnected] = useState(false);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,6 +38,23 @@ const DashNav = ({ Home }) => {
     };
 
     if (userId) fetchUser();
+    setIsConnected(socket.connected);
+
+    socket.on("connect", () => {
+      setIsConnected(true);
+    });
+
+    socket.on("disconnect", () => {
+      setIsConnected(false);
+    });
+
+    socket.on("userFound", (data) => {
+      setUser((prev) => ({ ...prev, userFound: data }));
+    });
+
+    return () => {
+      socket.off("userFound");
+    };
   }, [userId]);
 
   useEffect(() => {

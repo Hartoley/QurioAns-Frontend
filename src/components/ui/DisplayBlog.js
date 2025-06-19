@@ -30,8 +30,6 @@ export default function DisplayBlog({ Home }) {
       }
     };
 
-    fetchBlog();
-
     // Check initial connection status
     setIsConnected(socket.connected);
 
@@ -47,68 +45,57 @@ export default function DisplayBlog({ Home }) {
     });
 
     // Listen for serverStarted event
-    socket.on("serverStarted", (data) => {
-      console.log(data.message);
-    });
+    socket.on("serverStarted", (data) => {});
 
     // Listen for userUpdated event
-    socket.on("userUpdated", (data) => {
-      console.log("User  updated event received:", data);
-    });
+    socket.on("userUpdated", (data) => {});
 
     // Listen for blogCreated event
     socket.on("blogCreated", (blog) => {
-      console.log("📝 Blog created:", blog);
-      setBlog(blog); // Update the blog state if necessary
+      setBlog((prev) => ({ ...prev, ...blog })); // Update the blog state if necessary
     });
 
     // Listen for userFound event
     socket.on("userFound", (data) => {
-      console.log("User  found event received:", data);
+      // console.log("User  found event received:", data);
+      setBlog((prev) => ({ ...prev, ...data }));
     });
 
     // Listen for adminUpdated event
     socket.on("adminUpdated", (data) => {
-      console.log("Admin update event received:", data);
+      setBlog((prev) => ({ ...prev, ...data }));
     });
 
     // Listen for commentAdded event
     socket.on("commentAdded", (data) => {
-      console.log(`💬 Comment added to blog ID: ${data.blogId}`);
+      setBlog((prev) => ({ ...prev, ...data }));
     });
 
     // Listen for blogLiked event
     socket.on("blogLiked", (data) => {
-      console.log(
-        `❤️ Blog ID: ${data.blogId} liked by user ID: ${data.userId}`
-      );
+      setBlog((prev) => ({ ...prev, ...data }));
     });
 
     // Listen for blogUpdated event
     socket.on("blogUpdated", (data) => {
-      console.log(`Updated Blog ID: ${data.title}`);
+      setBlog((prev) => ({ ...prev, ...data }));
     });
 
     // Listen for replyAdded event
     socket.on("replyAdded", (data) => {
-      console.log(
-        `↩️ Reply added to comment ID: ${data.commentId} on blog ID: ${data.blogId}`
-      );
+      setBlog((prev) => ({ ...prev, ...data }));
     });
 
     // Listen for commentLiked event
     socket.on("commentLiked", (data) => {
-      console.log(
-        `👍 Comment ID: ${data.commentId} on blog ID: ${data.blogId} liked by user ID: ${data.userId}`
-      );
+      setBlog((prev) => ({ ...prev, ...data }));
     });
 
     // Listen for replyLiked event
     socket.on("replyLiked", (data) => {
-      console.log(
-        `🔥 Reply at index: ${data.replyIndex} on comment ID: ${data.commentId} liked by user ID: ${data.userId}`
-      );
+      setBlog((prev) => ({ ...prev, ...data }));
     });
+    fetchBlog();
 
     // Cleanup function
     return () => {
@@ -133,7 +120,6 @@ export default function DisplayBlog({ Home }) {
       await axios.put(
         `https://qurioans.onrender.com/likeblog/${userId}/${blog._id}`
       );
-      setBlog((prev) => ({ ...prev, likesCount: prev.likesCount + 1 }));
     } catch (err) {
       console.error(err);
     }
@@ -148,10 +134,7 @@ export default function DisplayBlog({ Home }) {
           model: "User",
         }
       );
-      setBlog((prev) => ({
-        ...prev,
-        comments: [...prev.comments, response.data],
-      }));
+
       setCommentInput("");
     } catch (err) {
       console.error(err);
@@ -170,12 +153,7 @@ export default function DisplayBlog({ Home }) {
           comment: replyInputs[commentId].trim(),
         }
       );
-      const updatedComments = blog.comments.map((c) =>
-        c._id === commentId
-          ? { ...c, replies: [...c.replies, response.data] }
-          : c
-      );
-      setBlog((prev) => ({ ...prev, comments: updatedComments }));
+
       setReplyInputs({ ...replyInputs, [commentId]: "" });
     } catch (err) {
       console.error("Error adding reply:", err.response?.data || err.message);
@@ -183,17 +161,11 @@ export default function DisplayBlog({ Home }) {
   };
 
   const handleLikeComment = async (commentId) => {
-    console.log(userId);
-
     try {
       const response = await axios.put(
         `https://qurioans.onrender.com/likecomment/${blog._id}/${commentId}`,
         { userId }
       );
-      const updatedComments = blog.comments.map((c) =>
-        c._id === commentId ? { ...c, ...response.data } : c
-      );
-      setBlog((prev) => ({ ...prev, comments: updatedComments }));
     } catch (err) {
       console.error(err);
     }
@@ -224,7 +196,7 @@ export default function DisplayBlog({ Home }) {
     });
   };
 
-  if (!blog) {
+  if (blog === null) {
     return (
       <>
         <DashNav Home={Home} />

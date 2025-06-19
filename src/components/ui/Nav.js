@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import logo from "../../Images/cover-removebg-preview.png";
 import { useLocation, useNavigate } from "react-router-dom";
+import io from "socket.io-client";
+
+const socket = io("https://qurioans.onrender.com");
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,6 +14,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const pathname = location.pathname;
   const [user, setuser] = useState("");
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     const user = localStorage.getItem("QurioUser");
