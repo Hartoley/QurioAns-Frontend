@@ -6,6 +6,7 @@ import Footer from "./Footer";
 import UserDash from "../../Users/UserDash";
 import { FaHeart, FaRegHeart, FaCommentDots, FaTimes } from "react-icons/fa";
 import io from "socket.io-client";
+import { motion } from "framer-motion";
 
 const socket = io("https://qurioans.onrender.com");
 
@@ -17,6 +18,7 @@ export default function DisplayBlog({ Home }) {
   const [showLikers, setShowLikers] = useState(null);
   const userId = localStorage.getItem("QurioUser");
   const [isConnected, setIsConnected] = useState(false);
+  const [showReplies, setShowReplies] = useState(false); // Move this to component-level state if needed
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -279,10 +281,17 @@ export default function DisplayBlog({ Home }) {
             onClick={handleLike}
             className="flex items-center gap-1 text-red-600 hover:opacity-80"
           >
-            {blog.likes.includes(userId) ? <FaHeart /> : <FaRegHeart />}{" "}
+            {blog.likes?.some(
+              (liker) => liker === userId || liker._id === userId
+            ) ? (
+              <FaHeart />
+            ) : (
+              <FaRegHeart />
+            )}
+
             {blog.likesCount}
           </button>
-          <span>🗨️ {blog.comments.length} comments</span>
+          <span>🗨️ {blog.comments?.length || 0} comments</span>
         </div>
 
         <div className="mb-10">
@@ -302,108 +311,150 @@ export default function DisplayBlog({ Home }) {
         </div>
 
         <div className="space-y-8">
-          {blog.comments.map((comment) => {
-            const commenter = comment.commenter?.userId;
-            return (
-              <div key={comment._id} className="border-b pb-4">
-                <div className="flex items-center mb-1">
-                  <img
-                    src={
-                      commenter?.avatarUrl ||
-                      "https://i.pinimg.com/736x/cd/4b/d9/cd4bd9b0ea2807611ba3a67c331bff0b.jpg"
-                    }
-                    className="w-6 h-6 rounded-full object-cover mr-2"
-                    alt="avatar"
-                  />
-                  <a
-                    href={`/profile/${commenter?._id}`}
-                    className="text-sm font-medium text-indigo-800"
-                  >
-                    {commenter?.userName || "Unknown"}
-                  </a>
-                </div>
-                <p className="text-sm text-gray-700 mb-1">{comment.comment}</p>
-                <button
-                  onClick={() => handleLikeComment(comment._id)}
-                  className={`text-sm mt-1 ${
-                    comment.likedBy?.includes(userId)
-                      ? "text-red-600"
-                      : "text-gray-500"
-                  } hover:underline`}
+          {Array.isArray(blog.comments) &&
+            blog.comments.map((comment) => {
+              const commenter = comment.commenter?.userId;
+
+              return (
+                <motion.div
+                  key={comment._id}
+                  className="border-b pb-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  {comment.likedBy?.some((liker) => liker._id === userId)
-                    ? "❤️"
-                    : "🤍"}{" "}
-                  ({comment.likesCount || 0})
-                </button>
+                  <div className="flex items-center mb-1">
+                    <img
+                      src={
+                        commenter?.avatarUrl ||
+                        "https://i.pinimg.com/736x/cd/4b/d9/cd4bd9b0ea2807611ba3a67c331bff0b.jpg"
+                      }
+                      className="w-6 h-6 rounded-full object-cover mr-2"
+                      alt="avatar"
+                    />
+                    <a
+                      href={`/profile/${commenter?._id}`}
+                      className="text-sm font-medium text-indigo-800"
+                    >
+                      {commenter?.userName || "Unknown"}
+                    </a>
+                  </div>
 
-                <div className="ml-8 space-y-3 mt-2">
-                  {comment.replies?.map((reply, index) => {
-                    const replier = reply.commenter?.id;
-                    return (
-                      <div key={index} className="flex items-start gap-2">
-                        <img
-                          src={
-                            replier?.avatarUrl ||
-                            "https://i.pinimg.com/736x/cd/4b/d9/cd4bd9b0ea2807611ba3a67c331bff0b.jpg"
-                          }
-                          className="w-5 h-5 rounded-full object-cover mt-1"
-                          alt="avatar"
-                        />
-                        <div>
-                          <a
-                            href={`/profile/${replier?._id}`}
-                            className="text-xs font-semibold text-indigo-700"
-                          >
-                            {replier?.userName || "Unknown"}
-                          </a>
-                          <p className="text-sm text-gray-700">
-                            {reply.comment}
-                          </p>
-                          <button
-                            onClick={() => handleLikeReply(comment._id, index)}
-                            className={`text-xs ${
-                              reply.likedBy?.some(
-                                (liker) => liker._id === userId
-                              )
-                                ? "text-red-600"
-                                : "text-gray-500"
-                            } hover:underline`}
-                          >
-                            {reply.likedBy?.some(
-                              (liker) => liker._id === userId
-                            )
-                              ? "❤️"
-                              : "🤍"}{" "}
-                            ({reply.likesCount || 0})
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
+                  <p className="text-sm text-gray-700 mb-1">
+                    {comment.comment}
+                  </p>
 
-                  <input
-                    type="text"
-                    placeholder="Reply..."
-                    value={replyInputs[comment._id] || ""}
-                    onChange={(e) =>
-                      setReplyInputs({
-                        ...replyInputs,
-                        [comment._id]: e.target.value,
-                      })
-                    }
-                    className="w-full border border-gray-200 px-3 py-1 text-sm rounded-md mt-2"
-                  />
                   <button
-                    onClick={() => handleReply(comment._id)}
-                    className="text-indigo-600 text-sm mt-1 hover:underline"
+                    onClick={() => handleLikeComment(comment._id)}
+                    className={`text-sm mt-1 ${
+                      Array.isArray(comment.likedBy) &&
+                      comment.likedBy.some((liker) => liker._id === userId)
+                        ? "text-red-600"
+                        : "text-gray-500"
+                    } hover:underline`}
                   >
-                    Reply
+                    {Array.isArray(comment.likedBy) &&
+                    comment.likedBy.some((liker) => liker._id === userId)
+                      ? "❤️"
+                      : "🤍"}{" "}
+                    ({comment.likesCount || 0})
                   </button>
-                </div>
-              </div>
-            );
-          })}
+
+                  {/* Toggle replies */}
+                  {comment.replies?.length > 0 && (
+                    <button
+                      onClick={() => setShowReplies(!showReplies)}
+                      className="text-xs text-indigo-600 mt-2 hover:underline"
+                    >
+                      {showReplies
+                        ? "Hide replies"
+                        : `View replies (${comment.replies.length})`}
+                    </button>
+                  )}
+
+                  {/* Reply Section */}
+                  {showReplies && (
+                    <div className="ml-8 space-y-3 mt-2">
+                      {Array.isArray(comment.replies) &&
+                        comment.replies.map((reply, index) => {
+                          const replier = reply.commenter?.id;
+
+                          return (
+                            <motion.div
+                              key={index}
+                              className="flex items-start gap-2"
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ duration: 0.25 }}
+                            >
+                              <img
+                                src={
+                                  replier?.avatarUrl ||
+                                  "https://i.pinimg.com/736x/cd/4b/d9/cd4bd9b0ea2807611ba3a67c331bff0b.jpg"
+                                }
+                                className="w-5 h-5 rounded-full object-cover mt-1"
+                                alt="avatar"
+                              />
+                              <div>
+                                <a
+                                  href={`/profile/${replier?._id}`}
+                                  className="text-xs font-semibold text-indigo-700"
+                                >
+                                  {replier?.userName || "Unknown"}
+                                </a>
+                                <p className="text-sm text-gray-700">
+                                  {reply.comment}
+                                </p>
+                                <button
+                                  onClick={() =>
+                                    handleLikeReply(comment._id, index)
+                                  }
+                                  className={`text-xs ${
+                                    Array.isArray(reply.likedBy) &&
+                                    reply.likedBy.some(
+                                      (liker) => liker._id === userId
+                                    )
+                                      ? "text-red-600"
+                                      : "text-gray-500"
+                                  } hover:underline`}
+                                >
+                                  {Array.isArray(reply.likedBy) &&
+                                  reply.likedBy.some(
+                                    (liker) => liker._id === userId
+                                  )
+                                    ? "❤️"
+                                    : "🤍"}{" "}
+                                  ({reply.likesCount || 0})
+                                </button>
+                              </div>
+                            </motion.div>
+                          );
+                        })}
+
+                      {/* Reply input */}
+                      <input
+                        type="text"
+                        placeholder="Reply..."
+                        value={replyInputs[comment._id] || ""}
+                        onChange={(e) =>
+                          setReplyInputs({
+                            ...replyInputs,
+                            [comment._id]: e.target.value,
+                          })
+                        }
+                        className="w-full border border-gray-200 px-3 py-1 text-sm rounded-md mt-2"
+                      />
+                      <button
+                        onClick={() => handleReply(comment._id)}
+                        className="text-indigo-600 text-sm mt-1 hover:underline"
+                      >
+                        Reply
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
         </div>
       </div>
 
