@@ -1,7 +1,10 @@
-// BlogDetails.js
 import React from "react";
 
-const BlogDetails = ({ blog, formatDate }) => {
+const BlogDetails = ({ blog, formatDate, handleLike, userId }) => {
+  const hasUserLikedBlog = blog.likes?.some(
+    (likeId) => likeId.toString() === userId
+  );
+
   return (
     <div className="mt-16 max-w-4xl mx-auto px-6">
       <p className="pt-10 text-2xl md:text-4xl font-bold leading-snug text-gray-900 mb-2">
@@ -14,7 +17,7 @@ const BlogDetails = ({ blog, formatDate }) => {
         </p>
       )}
 
-      <p className="text-sm flex text-center gap-2 text-gray-600 mb-4">
+      <p className="text-sm flex items-center gap-2 text-gray-600 mb-4">
         <img
           src={
             blog?.createdBy?.avatarUrl ||
@@ -34,6 +37,24 @@ const BlogDetails = ({ blog, formatDate }) => {
         className="prose prose-indigo prose-base max-w-none mb-10"
         dangerouslySetInnerHTML={{ __html: blog.body }}
       />
+
+      <div className="flex items-center justify-between mt-6 mb-14">
+        <button
+          onClick={handleLike}
+          disabled={hasUserLikedBlog}
+          className={`${
+            hasUserLikedBlog
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-red-600 hover:bg-red-700"
+          } text-white px-4 py-2 rounded-full`}
+        >
+          {hasUserLikedBlog ? "❤️" : "🤍"}
+        </button>
+
+        <p className="text-sm text-gray-600">
+          {blog.likesCount ?? blog.likes?.length ?? 0} Likes
+        </p>
+      </div>
     </div>
   );
 };

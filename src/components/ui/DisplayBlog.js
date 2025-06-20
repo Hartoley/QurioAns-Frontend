@@ -1,4 +1,3 @@
-// DisplayBlog.js
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -18,7 +17,6 @@ export default function DisplayBlog({ Home }) {
   const [commentInput, setCommentInput] = useState("");
   const [replyInputs, setReplyInputs] = useState({});
   const [showLikers, setShowLikers] = useState(null);
-  const [isConnected, setIsConnected] = useState(false);
   const userId = localStorage.getItem("QurioUser");
 
   useEffect(() => {
@@ -33,38 +31,55 @@ export default function DisplayBlog({ Home }) {
       }
     };
 
-    setIsConnected(socket.connected);
+    fetchBlog();
 
     socket.on("connect", () => {
-      setIsConnected(true);
       console.log("Socket connected");
     });
 
     socket.on("disconnect", () => {
-      setIsConnected(false);
       console.log("Socket disconnected");
     });
 
-    // Avoid duplicates when adding new comment
-    socket.on("commentAdded", (data) => {
+    socket.on("commentAdded", (comment) => {
       setBlog((prev) => {
-        if (prev.comments.some((c) => c._id === data._id)) return prev;
-        return { ...prev, comments: [...prev.comments, data] };
+        if (prev.comments.some((c) => c._id === comment._id)) return prev;
+        return { ...prev, comments: [...prev.comments, comment] };
       });
     });
 
-    // Avoid duplicates when adding reply
-    socket.on("replyAdded", (data) => {
+    socket.on("commentLiked", (updatedComment) => {
+      setBlog((prev) => {
+        const updatedComments = prev.comments.map((c) =>
+          c._id === updatedComment._id ? updatedComment : c
+        );
+        return { ...prev, comments: updatedComments };
+      });
+    });
+
+    socket.on("replyAdded", ({ commentId, reply }) => {
       setBlog((prev) => {
         const updatedComments = prev.comments.map((comment) => {
-          if (comment._id === data.commentId) {
-            if (comment.replies?.some((r) => r._id === data._id)) {
-              return comment; // Already added
-            }
-            return {
-              ...comment,
-              replies: [...comment.replies, data],
-            };
+          if (comment._id === commentId) {
+            if (comment.replies.some((r) => r._id === reply._id))
+              return comment;
+            return { ...comment, replies: [...comment.replies, reply] };
+          }
+          return comment;
+        });
+
+        return { ...prev, comments: updatedComments };
+      });
+    });
+
+    socket.on("replyLiked", ({ commentId, reply }) => {
+      setBlog((prev) => {
+        const updatedComments = prev.comments.map((comment) => {
+          if (comment._id === commentId) {
+            const newReplies = comment.replies.map((r) =>
+              r._id === reply._id ? reply : r
+            );
+            return { ...comment, replies: newReplies };
           }
           return comment;
         });
@@ -72,13 +87,13 @@ export default function DisplayBlog({ Home }) {
       });
     });
 
-    fetchBlog();
-
     return () => {
       socket.off("connect");
       socket.off("disconnect");
       socket.off("commentAdded");
+      socket.off("commentLiked");
       socket.off("replyAdded");
+      socket.off("replyLiked");
     };
   }, [id]);
 
@@ -102,13 +117,10 @@ export default function DisplayBlog({ Home }) {
         }
       );
 
-      setBlog((prev) => {
-        if (prev.comments.some((c) => c._id === response.data._id)) return prev;
-        return {
-          ...prev,
-          comments: [...prev.comments, response.data],
-        };
-      });
+      setBlog((prev) => ({
+        ...prev,
+        comments: [...prev.comments, response.data],
+      }));
 
       setCommentInput("");
     } catch (err) {
@@ -125,23 +137,24 @@ export default function DisplayBlog({ Home }) {
             id: userId,
             model: "User",
           },
-          comment: replyInputs[commentId].trim(),
+          comment: replyInputs[commentId]?.trim(),
         }
       );
 
-      const updatedComments = blog.comments.map((c) =>
-        c._id === commentId
-          ? {
-              ...c,
-              replies: c.replies.some((r) => r._id === response.data._id)
-                ? c.replies
-                : [...c.replies, response.data],
-            }
-          : c
-      );
+      setBlog((prev) => {
+        const updatedComments = prev.comments.map((comment) => {
+          if (comment._id === commentId) {
+            return {
+              ...comment,
+              replies: [...comment.replies, response.data],
+            };
+          }
+          return comment;
+        });
+        return { ...prev, comments: updatedComments };
+      });
 
-      setBlog((prev) => ({ ...prev, comments: updatedComments }));
-      setReplyInputs({ ...replyInputs, [commentId]: "" });
+      setReplyInputs((prev) => ({ ...prev, [commentId]: "" }));
     } catch (err) {
       console.error("Error adding reply:", err.response?.data || err.message);
     }
@@ -217,7 +230,11 @@ export default function DisplayBlog({ Home }) {
   return (
     <>
       <DashNav />
-      <BlogDetails blog={blog} formatDate={formatDate} />
+      <BlogDetails
+        handleLike={handleLike}
+        blog={blog}
+        formatDate={formatDate}
+      />
       <Comments
         blog={blog}
         handleComment={handleComment}
