@@ -233,6 +233,7 @@ export default function DisplayBlog({ Home }) {
         handleLike={handleLike}
         blog={blog}
         formatDate={formatDate}
+        userId={userId}
       />
       <Comments
         blog={blog}
