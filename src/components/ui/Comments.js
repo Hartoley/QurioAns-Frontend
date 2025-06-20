@@ -161,43 +161,46 @@ const Comments = ({
             {/* Replies */}
             {showReplies[comment._id] &&
               Array.isArray(comment.replies) &&
-              comment.replies.map((reply, index) => {
-                const replier = reply.commenter?.id;
-                return (
-                  <div key={index} className="ml-8 mt-3 flex gap-2">
-                    <img
-                      src={
-                        replier?.avatarUrl ||
-                        "https://i.pinimg.com/736x/cd/4b/d9/cd4bd9b0ea2807611ba3a67c331bff0b.jpg"
-                      }
-                      className="w-5 h-5 rounded-full object-cover mt-1"
-                      alt="avatar"
-                    />
-                    <div>
-                      <a
-                        href={`/profile/${replier?._id}`}
-                        className="text-xs font-semibold text-[rgb(6,4,52)]"
-                      >
-                        {replier?.userName || "Unknown"}
-                      </a>
-                      <p className="text-sm text-gray-700">{reply.comment}</p>
-                      <button
-                        onClick={() => handleLikeReply(comment._id, index)}
-                        className={`text-xs ${
-                          reply.likedBy?.some((liker) => liker._id === userId)
-                            ? "text-red-600"
-                            : "text-gray-500"
-                        } hover:underline`}
-                      >
-                        {reply.likedBy?.some((liker) => liker._id === userId)
-                          ? "❤️"
-                          : "🤍"}{" "}
-                        {reply.likesCount || 0}
-                      </button>
+              comment.replies
+                .filter((r) => r && r.commenter)
+                .map((reply, index) => {
+                  const replier = reply?.commenter?.id || {};
+
+                  return (
+                    <div key={index} className="ml-8 mt-3 flex gap-2">
+                      <img
+                        src={
+                          replier?.avatarUrl ||
+                          "https://i.pinimg.com/736x/cd/4b/d9/cd4bd9b0ea2807611ba3a67c331bff0b.jpg"
+                        }
+                        className="w-5 h-5 rounded-full object-cover mt-1"
+                        alt="avatar"
+                      />
+                      <div>
+                        <a
+                          href={`/profile/${replier?._id}`}
+                          className="text-xs font-semibold text-[rgb(6,4,52)]"
+                        >
+                          {replier?.userName || "Unknown"}
+                        </a>
+                        <p className="text-sm text-gray-700">{reply.comment}</p>
+                        <button
+                          onClick={() => handleLikeReply(comment._id, index)}
+                          className={`text-xs ${
+                            reply.likedBy?.some((liker) => liker._id === userId)
+                              ? "text-red-600"
+                              : "text-gray-500"
+                          } hover:underline`}
+                        >
+                          {reply.likedBy?.some((liker) => liker._id === userId)
+                            ? "❤️"
+                            : "🤍"}{" "}
+                          {reply.likesCount || 0}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
           </div>
         );
       })}

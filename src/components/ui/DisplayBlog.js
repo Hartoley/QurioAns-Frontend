@@ -177,7 +177,6 @@ export default function DisplayBlog({ Home }) {
         `https://qurioans.onrender.com/likereply/${blog._id}/${commentId}/${replyIndex}`,
         { userId }
       );
-      alert("Reply liked successfully");
     } catch (err) {
       alert(
         "Error liking reply: " + (err.response?.data?.error || err.message)
