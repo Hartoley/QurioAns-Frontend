@@ -17,7 +17,6 @@ const socket = io("https://qurioans.onrender.com");
 
 const DashNav = ({ Home }) => {
   const { userId } = useParams();
-  const [isConnected, setIsConnected] = useState(false);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -84,6 +83,108 @@ const DashNav = ({ Home }) => {
     localStorage.removeItem("QurioUser");
     navigate("/login");
   };
+
+  const { id } = useParams();
+  const [blog, setBlog] = useState(null);
+
+  const [isConnected, setIsConnected] = useState(false);
+
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        const response = await axios.get(
+          `https://qurioans.onrender.com/getblog/${id}`
+        );
+        setBlog(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    // Check initial connection status
+    setIsConnected(socket.connected);
+
+    // Listen for connection events
+    socket.on("connect", () => {
+      setIsConnected(true);
+      console.log("Socket connected");
+    });
+
+    socket.on("disconnect", () => {
+      setIsConnected(false);
+      console.log("Socket disconnected");
+    });
+
+    // Listen for serverStarted event
+    socket.on("serverStarted", (data) => {});
+
+    // Listen for userUpdated event
+    socket.on("userUpdated", (data) => {});
+
+    // Listen for blogCreated event
+    socket.on("blogCreated", (blog) => {
+      setBlog((prev) => ({ ...prev, ...blog })); // Update the blog state if necessary
+    });
+
+    // Listen for userFound event
+    socket.on("userFound", (data) => {
+      // console.log("User  found event received:", data);
+      setBlog((prev) => ({ ...prev, ...data }));
+    });
+
+    // Listen for adminUpdated event
+    socket.on("adminUpdated", (data) => {
+      setBlog((prev) => ({ ...prev, ...data }));
+    });
+
+    // Listen for commentAdded event
+    socket.on("commentAdded", (data) => {
+      setBlog((prev) => ({ ...prev, ...data }));
+    });
+
+    // Listen for blogLiked event
+    socket.on("blogLiked", (data) => {
+      setBlog((prev) => ({ ...prev, ...data }));
+    });
+
+    // Listen for blogUpdated event
+    socket.on("blogUpdated", (data) => {
+      setBlog((prev) => ({ ...prev, ...data }));
+    });
+
+    // Listen for replyAdded event
+    socket.on("replyAdded", (data) => {
+      setBlog((prev) => ({ ...prev, ...data }));
+    });
+
+    // Listen for commentLiked event
+    socket.on("commentLiked", (data) => {
+      setBlog((prev) => ({ ...prev, ...data }));
+    });
+
+    // Listen for replyLiked event
+    socket.on("replyLiked", (data) => {
+      setBlog((prev) => ({ ...prev, ...data }));
+    });
+    fetchBlog();
+
+    // Cleanup function
+    return () => {
+      socket.off("connect");
+      socket.off("disconnect");
+      socket.off("serverStarted");
+      socket.off("userUpdated");
+      socket.off("blogCreated");
+      socket.off("userFound");
+      socket.off("adminUpdated");
+      socket.off("commentAdded");
+      socket.off("blogLiked");
+      socket.off("blogUpdated");
+      socket.off("replyAdded");
+      socket.off("commentLiked");
+      socket.off("replyLiked");
+    };
+  }, [id]);
 
   return (
     <header className="fixed top-0 left-0 w-full z-40 bg-[rgb(6,4,52)] text-white shadow-md">

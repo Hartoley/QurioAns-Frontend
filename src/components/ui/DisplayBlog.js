@@ -1,12 +1,14 @@
+// DisplayBlog.js
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import DashNav from "./DashNav";
 import Footer from "./Footer";
 import UserDash from "../../Users/UserDash";
-import { FaHeart, FaRegHeart, FaCommentDots, FaTimes } from "react-icons/fa";
+import BlogDetails from "./BlogDetails";
+import Comments from "./Comments";
+import Likes from "./Likes";
 import io from "socket.io-client";
-import { motion } from "framer-motion";
 
 const socket = io("https://qurioans.onrender.com");
 
@@ -16,9 +18,8 @@ export default function DisplayBlog({ Home }) {
   const [commentInput, setCommentInput] = useState("");
   const [replyInputs, setReplyInputs] = useState({});
   const [showLikers, setShowLikers] = useState(null);
-  const userId = localStorage.getItem("QurioUser");
   const [isConnected, setIsConnected] = useState(false);
-  const [showReplies, setShowReplies] = useState(false); // Move this to component-level state if needed
+  const userId = localStorage.getItem("QurioUser");
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -32,10 +33,8 @@ export default function DisplayBlog({ Home }) {
       }
     };
 
-    // Check initial connection status
     setIsConnected(socket.connected);
 
-    // Listen for connection events
     socket.on("connect", () => {
       setIsConnected(true);
       console.log("Socket connected");
@@ -46,74 +45,40 @@ export default function DisplayBlog({ Home }) {
       console.log("Socket disconnected");
     });
 
-    // Listen for serverStarted event
-    socket.on("serverStarted", (data) => {});
-
-    // Listen for userUpdated event
-    socket.on("userUpdated", (data) => {});
-
-    // Listen for blogCreated event
-    socket.on("blogCreated", (blog) => {
-      setBlog((prev) => ({ ...prev, ...blog })); // Update the blog state if necessary
-    });
-
-    // Listen for userFound event
-    socket.on("userFound", (data) => {
-      // console.log("User  found event received:", data);
-      setBlog((prev) => ({ ...prev, ...data }));
-    });
-
-    // Listen for adminUpdated event
-    socket.on("adminUpdated", (data) => {
-      setBlog((prev) => ({ ...prev, ...data }));
-    });
-
-    // Listen for commentAdded event
+    // Avoid duplicates when adding new comment
     socket.on("commentAdded", (data) => {
-      setBlog((prev) => ({ ...prev, ...data }));
+      setBlog((prev) => {
+        if (prev.comments.some((c) => c._id === data._id)) return prev;
+        return { ...prev, comments: [...prev.comments, data] };
+      });
     });
 
-    // Listen for blogLiked event
-    socket.on("blogLiked", (data) => {
-      setBlog((prev) => ({ ...prev, ...data }));
-    });
-
-    // Listen for blogUpdated event
-    socket.on("blogUpdated", (data) => {
-      setBlog((prev) => ({ ...prev, ...data }));
-    });
-
-    // Listen for replyAdded event
+    // Avoid duplicates when adding reply
     socket.on("replyAdded", (data) => {
-      setBlog((prev) => ({ ...prev, ...data }));
+      setBlog((prev) => {
+        const updatedComments = prev.comments.map((comment) => {
+          if (comment._id === data.commentId) {
+            if (comment.replies?.some((r) => r._id === data._id)) {
+              return comment; // Already added
+            }
+            return {
+              ...comment,
+              replies: [...comment.replies, data],
+            };
+          }
+          return comment;
+        });
+        return { ...prev, comments: updatedComments };
+      });
     });
 
-    // Listen for commentLiked event
-    socket.on("commentLiked", (data) => {
-      setBlog((prev) => ({ ...prev, ...data }));
-    });
-
-    // Listen for replyLiked event
-    socket.on("replyLiked", (data) => {
-      setBlog((prev) => ({ ...prev, ...data }));
-    });
     fetchBlog();
 
-    // Cleanup function
     return () => {
       socket.off("connect");
       socket.off("disconnect");
-      socket.off("serverStarted");
-      socket.off("userUpdated");
-      socket.off("blogCreated");
-      socket.off("userFound");
-      socket.off("adminUpdated");
       socket.off("commentAdded");
-      socket.off("blogLiked");
-      socket.off("blogUpdated");
       socket.off("replyAdded");
-      socket.off("commentLiked");
-      socket.off("replyLiked");
     };
   }, [id]);
 
@@ -137,6 +102,14 @@ export default function DisplayBlog({ Home }) {
         }
       );
 
+      setBlog((prev) => {
+        if (prev.comments.some((c) => c._id === response.data._id)) return prev;
+        return {
+          ...prev,
+          comments: [...prev.comments, response.data],
+        };
+      });
+
       setCommentInput("");
     } catch (err) {
       console.error(err);
@@ -156,6 +129,18 @@ export default function DisplayBlog({ Home }) {
         }
       );
 
+      const updatedComments = blog.comments.map((c) =>
+        c._id === commentId
+          ? {
+              ...c,
+              replies: c.replies.some((r) => r._id === response.data._id)
+                ? c.replies
+                : [...c.replies, response.data],
+            }
+          : c
+      );
+
+      setBlog((prev) => ({ ...prev, comments: updatedComments }));
       setReplyInputs({ ...replyInputs, [commentId]: "" });
     } catch (err) {
       console.error("Error adding reply:", err.response?.data || err.message);
@@ -164,7 +149,7 @@ export default function DisplayBlog({ Home }) {
 
   const handleLikeComment = async (commentId) => {
     try {
-      const response = await axios.put(
+      await axios.put(
         `https://qurioans.onrender.com/likecomment/${blog._id}/${commentId}`,
         { userId }
       );
@@ -177,9 +162,7 @@ export default function DisplayBlog({ Home }) {
     try {
       await axios.put(
         `https://qurioans.onrender.com/likereply/${blog._id}/${commentId}/${replyIndex}`,
-        {
-          userId,
-        }
+        { userId }
       );
       alert("Reply liked successfully");
     } catch (err) {
@@ -207,13 +190,8 @@ export default function DisplayBlog({ Home }) {
           role="status"
           aria-label="Loading blog content"
         >
-          {/* Title skeleton */}
           <div className="h-10 bg-indigo-300 rounded-lg max-w-3/4 mb-6"></div>
-
-          {/* Subtitle skeleton */}
           <div className="h-6 bg-indigo-200 rounded-lg max-w-1/2 mb-10"></div>
-
-          {/* Paragraph skeleton */}
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
               <div
@@ -222,20 +200,15 @@ export default function DisplayBlog({ Home }) {
               ></div>
             ))}
           </div>
-
-          {/* Like and comment section skeleton */}
           <div className="flex items-center space-x-6 mt-10">
             <div className="h-6 w-20 bg-indigo-300 rounded-lg"></div>
             <div className="h-6 w-12 bg-indigo-300 rounded-lg"></div>
           </div>
-
-          {/* Comment input skeleton */}
           <div className="mt-10">
             <div className="h-10 bg-indigo-200 rounded-full w-full"></div>
             <div className="h-8 w-24 bg-indigo-300 rounded-full mt-4"></div>
           </div>
         </div>
-
         <Footer />
       </>
     );
@@ -244,255 +217,20 @@ export default function DisplayBlog({ Home }) {
   return (
     <>
       <DashNav />
-      <div className="mt-16 max-w-4xl mx-auto px-6">
-        <p className="pt-10 text-2xl md:text-4xl font-bold leading-snug text-gray-900 mb-2">
-          {blog.title}
-        </p>
-
-        {blog.subtitle && (
-          <p className="text-base text-center italic text-indigo-700 mb-6">
-            {blog.subtitle}
-          </p>
-        )}
-
-        <p className="text-sm flex text-center gap-2 text-gray-600 mb-4">
-          <img
-            src={
-              blog?.createdBy?.avatarUrl ||
-              "https://i.pinimg.com/736x/ec/dd/5a/ecdd5aacabb70ecca9bfdaeec9ef2ba4.jpg"
-            }
-            alt="avatar"
-            className="w-5 h-5 rounded-full object-cover"
-          />
-          By{" "}
-          <span className="font-medium text-indigo-700">
-            {blog.createdBy?.userName || "Anonymous"}
-          </span>
-          • {formatDate(blog.createdAt)}
-        </p>
-
-        <div
-          className="prose prose-indigo prose-base max-w-none mb-10"
-          dangerouslySetInnerHTML={{ __html: blog.body }}
-        />
-
-        <div className="flex items-center space-x-6 mb-8 text-sm text-gray-600">
-          <button
-            onClick={handleLike}
-            className="flex items-center gap-1 text-red-600 hover:opacity-80"
-          >
-            {blog.likes?.some(
-              (liker) => liker === userId || liker._id === userId
-            ) ? (
-              <FaHeart />
-            ) : (
-              <FaRegHeart />
-            )}
-
-            {blog.likesCount}
-          </button>
-          <span>🗨️ {blog.comments?.length || 0} comments</span>
-        </div>
-
-        <div className="mb-10">
-          <input
-            type="text"
-            placeholder="Write a thoughtful comment..."
-            value={commentInput}
-            onChange={(e) => setCommentInput(e.target.value)}
-            className="w-full border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-          <button
-            onClick={handleComment}
-            className="mt-2 px-4 py-2 bg-[rgb(6,4,52)] text-white rounded-md hover:bg-[rgba(6,4,52,0.83)]"
-          >
-            Post Comment
-          </button>
-        </div>
-
-        <div className="space-y-8">
-          {Array.isArray(blog.comments) &&
-            blog.comments.map((comment) => {
-              const commenter = comment.commenter?.userId;
-
-              return (
-                <motion.div
-                  key={comment._id}
-                  className="border-b pb-4"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="flex items-center mb-1">
-                    <img
-                      src={
-                        commenter?.avatarUrl ||
-                        "https://i.pinimg.com/736x/cd/4b/d9/cd4bd9b0ea2807611ba3a67c331bff0b.jpg"
-                      }
-                      className="w-6 h-6 rounded-full object-cover mr-2"
-                      alt="avatar"
-                    />
-                    <a
-                      href={`/profile/${commenter?._id}`}
-                      className="text-sm font-medium text-indigo-800"
-                    >
-                      {commenter?.userName || "Unknown"}
-                    </a>
-                  </div>
-
-                  <p className="text-sm text-gray-700 mb-1">
-                    {comment.comment}
-                  </p>
-
-                  <button
-                    onClick={() => handleLikeComment(comment._id)}
-                    className={`text-sm mt-1 ${
-                      Array.isArray(comment.likedBy) &&
-                      comment.likedBy.some((liker) => liker._id === userId)
-                        ? "text-red-600"
-                        : "text-gray-500"
-                    } hover:underline`}
-                  >
-                    {Array.isArray(comment.likedBy) &&
-                    comment.likedBy.some((liker) => liker._id === userId)
-                      ? "❤️"
-                      : "🤍"}{" "}
-                    ({comment.likesCount || 0})
-                  </button>
-
-                  {/* Toggle replies */}
-                  {comment.replies?.length > 0 && (
-                    <button
-                      onClick={() => setShowReplies(!showReplies)}
-                      className="text-xs text-indigo-600 mt-2 hover:underline"
-                    >
-                      {showReplies
-                        ? "Hide replies"
-                        : `View replies (${comment.replies.length})`}
-                    </button>
-                  )}
-
-                  {/* Reply Section */}
-                  {showReplies && (
-                    <div className="ml-8 space-y-3 mt-2">
-                      {Array.isArray(comment.replies) &&
-                        comment.replies.map((reply, index) => {
-                          const replier = reply.commenter?.id;
-
-                          return (
-                            <motion.div
-                              key={index}
-                              className="flex items-start gap-2"
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ duration: 0.25 }}
-                            >
-                              <img
-                                src={
-                                  replier?.avatarUrl ||
-                                  "https://i.pinimg.com/736x/cd/4b/d9/cd4bd9b0ea2807611ba3a67c331bff0b.jpg"
-                                }
-                                className="w-5 h-5 rounded-full object-cover mt-1"
-                                alt="avatar"
-                              />
-                              <div>
-                                <a
-                                  href={`/profile/${replier?._id}`}
-                                  className="text-xs font-semibold text-indigo-700"
-                                >
-                                  {replier?.userName || "Unknown"}
-                                </a>
-                                <p className="text-sm text-gray-700">
-                                  {reply.comment}
-                                </p>
-                                <button
-                                  onClick={() =>
-                                    handleLikeReply(comment._id, index)
-                                  }
-                                  className={`text-xs ${
-                                    Array.isArray(reply.likedBy) &&
-                                    reply.likedBy.some(
-                                      (liker) => liker._id === userId
-                                    )
-                                      ? "text-red-600"
-                                      : "text-gray-500"
-                                  } hover:underline`}
-                                >
-                                  {Array.isArray(reply.likedBy) &&
-                                  reply.likedBy.some(
-                                    (liker) => liker._id === userId
-                                  )
-                                    ? "❤️"
-                                    : "🤍"}{" "}
-                                  ({reply.likesCount || 0})
-                                </button>
-                              </div>
-                            </motion.div>
-                          );
-                        })}
-
-                      {/* Reply input */}
-                      <input
-                        type="text"
-                        placeholder="Reply..."
-                        value={replyInputs[comment._id] || ""}
-                        onChange={(e) =>
-                          setReplyInputs({
-                            ...replyInputs,
-                            [comment._id]: e.target.value,
-                          })
-                        }
-                        className="w-full border border-gray-200 px-3 py-1 text-sm rounded-md mt-2"
-                      />
-                      <button
-                        onClick={() => handleReply(comment._id)}
-                        className="text-indigo-600 text-sm mt-1 hover:underline"
-                      >
-                        Reply
-                      </button>
-                    </div>
-                  )}
-                </motion.div>
-              );
-            })}
-        </div>
-      </div>
-
-      {/* Likers Modal */}
-      {showLikers && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl relative">
-            <button
-              className="absolute top-3 right-3 text-gray-600"
-              onClick={() => setShowLikers(null)}
-              aria-label="Close likers popup"
-            >
-              <FaTimes size={20} />
-            </button>
-            <h3 className="text-lg font-semibold mb-4">Liked by</h3>
-            <div className="space-y-3 max-h-[300px] overflow-y-auto">
-              {showLikers.likers.map((liker) => (
-                <a
-                  key={liker._id}
-                  href={`/profile/${liker._id}`}
-                  className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-md"
-                >
-                  <img
-                    src={
-                      liker.avatarUrl ||
-                      "https://i.pinimg.com/736x/cd/4b/d9/cd4bd9b0ea2807611ba3a67c331bff0b.jpg"
-                    }
-                    alt="avatar"
-                    className="w-8 h-8 rounded-full"
-                  />
-                  <span className="text-sm font-medium">{liker.userName}</span>
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
+      <BlogDetails blog={blog} formatDate={formatDate} />
+      <Comments
+        blog={blog}
+        handleComment={handleComment}
+        handleLikeComment={handleLikeComment}
+        handleReply={handleReply}
+        replyInputs={replyInputs}
+        setReplyInputs={setReplyInputs}
+        userId={userId}
+        handleLikeReply={handleLikeReply}
+        commentInput={commentInput}
+        setCommentInput={setCommentInput}
+      />
+      <Likes showLikers={showLikers} setShowLikers={setShowLikers} />
       <UserDash />
     </>
   );
