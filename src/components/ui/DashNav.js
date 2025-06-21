@@ -19,13 +19,13 @@ const DashNav = ({ Home }) => {
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [loadingSearch, setLoadingSearch] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [avatarDropdown, setAvatarDropdown] = useState(false);
 
   const dropdownRef = useRef();
   const searchRef = useRef();
 
-  // Fetch user on mount
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -41,17 +41,23 @@ const DashNav = ({ Home }) => {
     if (userId) fetchUser();
   }, [userId]);
 
-  // Debounced live search function
   const fetchSearchResults = useCallback(
     debounce(async (query) => {
-      if (!query.trim()) return setSearchResults([]);
+      if (!query.trim()) {
+        setSearchResults([]);
+        setLoadingSearch(false);
+        return;
+      }
       try {
+        setLoadingSearch(true);
         const res = await axios.get(
           `https://qurioans.onrender.com/search?search=${query}`
         );
         setSearchResults(res.data || []);
+        setLoadingSearch(false);
       } catch (err) {
         console.error("Search failed:", err);
+        setLoadingSearch(false);
       }
     }, 400),
     []
@@ -61,7 +67,6 @@ const DashNav = ({ Home }) => {
     fetchSearchResults(searchTerm);
   }, [searchTerm, fetchSearchResults]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -78,7 +83,7 @@ const DashNav = ({ Home }) => {
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-40 bg-[rgb(6,4,52)] text-white shadow-md">
+    <header className="fixed top-0 left-0 w-full z-50 bg-[rgb(6,4,52)] text-white shadow-md">
       <nav className="flex items-center justify-between px-4 md:px-8 py-3 h-16">
         <div onClick={Home} className="cursor-pointer text-2xl font-bold">
           QurioAns
@@ -110,24 +115,31 @@ const DashNav = ({ Home }) => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {/* Dropdown Results */}
-          {searchResults.length > 0 && (
+          {(loadingSearch || searchResults.length > 0 || searchTerm) && (
             <div className="absolute top-full mt-2 left-0 bg-white text-black rounded shadow-lg w-full z-50 max-h-60 overflow-y-auto">
-              {searchResults.map((blog) => (
-                <div
-                  key={blog._id}
-                  className="p-3 border-b hover:bg-gray-100 cursor-pointer"
-                  onClick={() => {
-                    navigate(`/blog/${blog.title}/${blog._id}/${userId}`);
-                    setSearchTerm("");
-                    setSearchResults([]);
-                  }}
-                >
-                  <p className="font-semibold">{blog.title}</p>
-                  <p className="text-sm text-gray-600">
-                    {blog.subtitle?.slice(0, 50) || blog.body?.slice(0, 50)}...
-                  </p>
-                </div>
-              ))}
+              {loadingSearch ? (
+                <p className="p-3 text-sm text-gray-600">Searching...</p>
+              ) : searchResults.length > 0 ? (
+                searchResults.map((blog) => (
+                  <div
+                    key={blog._id}
+                    className="p-3 border-b hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      navigate(`/blog/${blog.title}/${blog._id}/${userId}`);
+                      setSearchTerm("");
+                      setSearchResults([]);
+                    }}
+                  >
+                    <p className="font-semibold">{blog.title}</p>
+                    <p className="text-sm text-gray-600">
+                      {blog.subtitle?.slice(0, 50) || blog.body?.slice(0, 50)}
+                      ...
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="p-3 text-sm text-gray-600">No results found</p>
+              )}
             </div>
           )}
         </div>
@@ -181,7 +193,6 @@ const DashNav = ({ Home }) => {
             )}
           </div>
 
-          {/* Mobile Menu Toggle */}
           <button
             className="md:hidden text-white"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -194,13 +205,43 @@ const DashNav = ({ Home }) => {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden bg-[rgb(6,4,52)] text-white px-4 pb-4 space-y-3">
-          <input
-            type="text"
-            placeholder="Search blogs..."
-            className="w-full bg-white/10 px-4 py-2 rounded-full outline-none placeholder:text-white/70 text-white"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          <div ref={searchRef} className="relative">
+            <input
+              type="text"
+              placeholder="Search blogs..."
+              className="w-full bg-white/10 px-4 py-2 rounded-full outline-none placeholder:text-white/70 text-white"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {(loadingSearch || searchResults.length > 0 || searchTerm) && (
+              <div className="absolute top-full mt-2 left-0 bg-white text-black rounded shadow-lg w-full z-50 max-h-60 overflow-y-auto">
+                {loadingSearch ? (
+                  <p className="p-3 text-sm text-gray-600">Searching...</p>
+                ) : searchResults.length > 0 ? (
+                  searchResults.map((blog) => (
+                    <div
+                      key={blog._id}
+                      className="p-3 border-b hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        navigate(`/blog/${blog.title}/${blog._id}/${userId}`);
+                        setSearchTerm("");
+                        setSearchResults([]);
+                      }}
+                    >
+                      <p className="font-semibold">{blog.title}</p>
+                      <p className="text-sm text-gray-600">
+                        {blog.subtitle?.slice(0, 50) || blog.body?.slice(0, 50)}
+                        ...
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="p-3 text-sm text-gray-600">No results found</p>
+                )}
+              </div>
+            )}
+          </div>
+
           <div
             onClick={() => navigate("/write")}
             className="py-2 border-b border-white/10 cursor-pointer"
