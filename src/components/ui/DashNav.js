@@ -75,6 +75,8 @@ const DashNav = ({ Home }) => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
         setSearchResults([]);
+        setSearchTerm("");
+        setMenuOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
