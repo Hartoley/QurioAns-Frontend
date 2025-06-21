@@ -20,6 +20,7 @@ const DashNav = ({ Home }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [loadingSearch, setLoadingSearch] = useState(false);
+  const [loadingSearchComplete, setLoadingSearchComplete] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [avatarDropdown, setAvatarDropdown] = useState(false);
 
@@ -46,9 +47,11 @@ const DashNav = ({ Home }) => {
       if (!query.trim()) {
         setSearchResults([]);
         setLoadingSearch(false);
+        setLoadingSearchComplete(false);
         return;
       }
       try {
+        setLoadingSearchComplete(true);
         setLoadingSearch(true);
         const res = await axios.get(
           `https://qurioans.onrender.com/search?search=${query}`
@@ -58,6 +61,7 @@ const DashNav = ({ Home }) => {
       } catch (err) {
         console.error("Search failed:", err);
         setLoadingSearch(false);
+        setLoadingSearchComplete(false);
       }
     }, 400),
     []
@@ -112,7 +116,10 @@ const DashNav = ({ Home }) => {
             placeholder="Search blogs..."
             className="ml-2 bg-transparent outline-none text-white placeholder:text-white/70 w-full"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setLoadingSearchComplete(true);
+              setSearchTerm(e.target.value);
+            }}
           />
           {/* Dropdown Results */}
           {(loadingSearch || searchResults.length > 0 || searchTerm) && (
@@ -125,6 +132,7 @@ const DashNav = ({ Home }) => {
                     key={blog._id}
                     className="p-3 border-b hover:bg-gray-100 cursor-pointer"
                     onClick={() => {
+                      setLoadingSearchComplete(false);
                       navigate(`/blog/${blog.title}/${blog._id}/${userId}`);
                       setSearchTerm("");
                       setSearchResults([]);
@@ -243,36 +251,40 @@ const DashNav = ({ Home }) => {
             )}
           </div>
 
-          <div
-            onClick={() => navigate("/write")}
-            className="py-2 border-b border-white/10 cursor-pointer"
-          >
-            Audio
-          </div>
-          <div
-            onClick={() => navigate("/notifications")}
-            className="py-2 border-b border-white/10 cursor-pointer"
-          >
-            Notifications
-          </div>
-          <div
-            onClick={() => navigate(`/profile/${userId}`)}
-            className="py-2 border-b border-white/10 cursor-pointer"
-          >
-            Profile
-          </div>
-          <div
-            onClick={() => navigate("/settings")}
-            className="py-2 border-b border-white/10 cursor-pointer"
-          >
-            Settings
-          </div>
-          <div
-            onClick={handleLogout}
-            className="py-2 border-b border-white/10 cursor-pointer"
-          >
-            Logout
-          </div>
+          {!loadingSearchComplete && (
+            <div>
+              <div
+                onClick={() => navigate("/write")}
+                className="py-2 border-b border-white/10 cursor-pointer"
+              >
+                Audio
+              </div>
+              <div
+                onClick={() => navigate("/notifications")}
+                className="py-2 border-b border-white/10 cursor-pointer"
+              >
+                Notifications
+              </div>
+              <div
+                onClick={() => navigate(`/profile/${userId}`)}
+                className="py-2 border-b border-white/10 cursor-pointer"
+              >
+                Profile
+              </div>
+              <div
+                onClick={() => navigate("/settings")}
+                className="py-2 border-b border-white/10 cursor-pointer"
+              >
+                Settings
+              </div>
+              <div
+                onClick={handleLogout}
+                className="py-2 border-b border-white/10 cursor-pointer"
+              >
+                Logout
+              </div>
+            </div>
+          )}
         </div>
       )}
     </header>
