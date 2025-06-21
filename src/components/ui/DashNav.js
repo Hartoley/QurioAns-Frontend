@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   FiBell,
-  FiEdit2,
   FiMenu,
   FiX,
   FiUser,
@@ -11,19 +10,22 @@ import {
 } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import io from "socket.io-client";
-
-const socket = io("https://qurioans.onrender.com");
+import debounce from "lodash.debounce";
 
 const DashNav = ({ Home }) => {
   const { userId } = useParams();
   const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [avatarDropdown, setAvatarDropdown] = useState(false);
-  const dropdownRef = useRef();
 
+  const dropdownRef = useRef();
+  const searchRef = useRef();
+
+  // Fetch user on mount
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -37,165 +39,56 @@ const DashNav = ({ Home }) => {
     };
 
     if (userId) fetchUser();
-    setIsConnected(socket.connected);
-
-    socket.on("connect", () => {
-      setIsConnected(true);
-    });
-
-    socket.on("disconnect", () => {
-      setIsConnected(false);
-    });
-
-    socket.on("userFound", (data) => {
-      setUser((prev) => ({ ...prev, userFound: data }));
-    });
-
-    return () => {
-      socket.off("userFound");
-    };
   }, [userId]);
 
-  useEffect(() => {
-    const handleOutsideClick = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setAvatarDropdown(false);
-      }
-    };
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, []);
-
-  const handleSearch = async (e) => {
-    if (e.key === "Enter" && searchTerm.trim()) {
+  // Debounced live search function
+  const fetchSearchResults = useCallback(
+    debounce(async (query) => {
+      if (!query.trim()) return setSearchResults([]);
       try {
         const res = await axios.get(
-          `https://qurioans.onrender.com/qurioans/blogs?search=${searchTerm}`
+          `https://qurioans.onrender.com/search?search=${query}`
         );
-        console.log("Search Results:", res.data);
+        setSearchResults(res.data || []);
       } catch (err) {
         console.error("Search failed:", err);
       }
-    }
-  };
+    }, 400),
+    []
+  );
+
+  useEffect(() => {
+    fetchSearchResults(searchTerm);
+  }, [searchTerm, fetchSearchResults]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setSearchResults([]);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("QurioUser");
     navigate("/login");
   };
 
-  const { id } = useParams();
-  const [blog, setBlog] = useState(null);
-
-  const [isConnected, setIsConnected] = useState(false);
-
-  useEffect(() => {
-    const fetchBlog = async () => {
-      try {
-        const response = await axios.get(
-          `https://qurioans.onrender.com/getblog/${id}`
-        );
-        setBlog(response.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    // Check initial connection status
-    setIsConnected(socket.connected);
-
-    // Listen for connection events
-    socket.on("connect", () => {
-      setIsConnected(true);
-      console.log("Socket connected");
-    });
-
-    socket.on("disconnect", () => {
-      setIsConnected(false);
-      console.log("Socket disconnected");
-    });
-
-    // Listen for serverStarted event
-    socket.on("serverStarted", (data) => {});
-
-    // Listen for userUpdated event
-    socket.on("userUpdated", (data) => {});
-
-    // Listen for blogCreated event
-    socket.on("blogCreated", (blog) => {
-      setBlog((prev) => ({ ...prev, ...blog })); // Update the blog state if necessary
-    });
-
-    // Listen for userFound event
-    socket.on("userFound", (data) => {
-      // console.log("User  found event received:", data);
-      setBlog((prev) => ({ ...prev, ...data }));
-    });
-
-    // Listen for adminUpdated event
-    socket.on("adminUpdated", (data) => {
-      setBlog((prev) => ({ ...prev, ...data }));
-    });
-
-    // Listen for commentAdded event
-    socket.on("commentAdded", (data) => {
-      setBlog((prev) => ({ ...prev, ...data }));
-    });
-
-    // Listen for blogLiked event
-    socket.on("blogLiked", (data) => {
-      setBlog((prev) => ({ ...prev, ...data }));
-    });
-
-    // Listen for blogUpdated event
-    socket.on("blogUpdated", (data) => {
-      setBlog((prev) => ({ ...prev, ...data }));
-    });
-
-    // Listen for replyAdded event
-    socket.on("replyAdded", (data) => {
-      setBlog((prev) => ({ ...prev, ...data }));
-    });
-
-    // Listen for commentLiked event
-    socket.on("commentLiked", (data) => {
-      setBlog((prev) => ({ ...prev, ...data }));
-    });
-
-    // Listen for replyLiked event
-    socket.on("replyLiked", (data) => {
-      setBlog((prev) => ({ ...prev, ...data }));
-    });
-    fetchBlog();
-
-    // Cleanup function
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("serverStarted");
-      socket.off("userUpdated");
-      socket.off("blogCreated");
-      socket.off("userFound");
-      socket.off("adminUpdated");
-      socket.off("commentAdded");
-      socket.off("blogLiked");
-      socket.off("blogUpdated");
-      socket.off("replyAdded");
-      socket.off("commentLiked");
-      socket.off("replyLiked");
-    };
-  }, [id]);
-
   return (
     <header className="fixed top-0 left-0 w-full z-40 bg-[rgb(6,4,52)] text-white shadow-md">
       <nav className="flex items-center justify-between px-4 md:px-8 py-3 h-16">
-        {/* Brand */}
         <div onClick={Home} className="cursor-pointer text-2xl font-bold">
           QurioAns
         </div>
 
         {/* Desktop Search */}
-        <div className="hidden md:flex items-center bg-white/10 rounded-full px-4 py-2 w-full max-w-md">
+        <div
+          className="hidden md:flex items-center bg-white/10 rounded-full px-4 py-2 w-full max-w-md relative"
+          ref={searchRef}
+        >
           <svg
             className="w-5 h-5 text-white"
             fill="none"
@@ -215,8 +108,28 @@ const DashNav = ({ Home }) => {
             className="ml-2 bg-transparent outline-none text-white placeholder:text-white/70 w-full"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={handleSearch}
           />
+          {/* Dropdown Results */}
+          {searchResults.length > 0 && (
+            <div className="absolute top-full mt-2 left-0 bg-white text-black rounded shadow-lg w-full z-50 max-h-60 overflow-y-auto">
+              {searchResults.map((blog) => (
+                <div
+                  key={blog._id}
+                  className="p-3 border-b hover:bg-gray-100 cursor-pointer"
+                  onClick={() => {
+                    navigate(`/blog/${blog.title}/${blog._id}/${userId}`);
+                    setSearchTerm("");
+                    setSearchResults([]);
+                  }}
+                >
+                  <p className="font-semibold">{blog.title}</p>
+                  <p className="text-sm text-gray-600">
+                    {blog.subtitle?.slice(0, 50) || blog.body?.slice(0, 50)}...
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Actions */}
@@ -225,13 +138,12 @@ const DashNav = ({ Home }) => {
             <FiMic size={18} />
             <span>Audio</span>
           </button>
-
           <FiBell
             size={20}
             className="text-white hover:text-purple-300 hidden md:block"
           />
 
-          {/* Avatar + Dropdown */}
+          {/* Avatar Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <img
               src={
@@ -288,7 +200,6 @@ const DashNav = ({ Home }) => {
             className="w-full bg-white/10 px-4 py-2 rounded-full outline-none placeholder:text-white/70 text-white"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={handleSearch}
           />
           <div
             onClick={() => navigate("/write")}
