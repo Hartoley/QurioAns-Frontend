@@ -223,9 +223,10 @@ const DashNav = ({ Home }) => {
                       key={blog._id}
                       className="p-3 border-b hover:bg-gray-100 cursor-pointer"
                       onClick={() => {
-                        navigate(`/blog/${blog.title}/${blog._id}/${userId}`);
                         setSearchTerm("");
                         setSearchResults([]);
+                        setMenuOpen(false);
+                        navigate(`/blog/${blog.title}/${blog._id}/${userId}`);
                       }}
                     >
                       <p className="font-semibold">{blog.title}</p>
