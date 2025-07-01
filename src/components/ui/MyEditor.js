@@ -38,77 +38,46 @@ export default function DisplayBlog({ Home }) {
     // Listen for connection events
     socket.on("connect", () => {
       setIsConnected(true);
-      console.log("Socket connected");
     });
 
     socket.on("disconnect", () => {
       setIsConnected(false);
-      console.log("Socket disconnected");
     });
 
     // Listen for serverStarted event
-    socket.on("serverStarted", (data) => {
-      console.log(data.message);
-    });
+    socket.on("serverStarted", (data) => {});
 
     // Listen for userUpdated event
-    socket.on("userUpdated", (data) => {
-      console.log("User  updated event received:", data);
-    });
+    socket.on("userUpdated", (data) => {});
 
     // Listen for blogCreated event
     socket.on("blogCreated", (blog) => {
-      console.log("📝 Blog created:", blog);
       setBlog(blog); // Update the blog state if necessary
     });
 
     // Listen for userFound event
-    socket.on("userFound", (data) => {
-      console.log("User  found event received:", data);
-    });
+    socket.on("userFound", (data) => {});
 
     // Listen for adminUpdated event
-    socket.on("adminUpdated", (data) => {
-      console.log("Admin update event received:", data);
-    });
+    socket.on("adminUpdated", (data) => {});
 
     // Listen for commentAdded event
-    socket.on("commentAdded", (data) => {
-      console.log(`💬 Comment added to blog ID: ${data.blogId}`);
-    });
+    socket.on("commentAdded", (data) => {});
 
     // Listen for blogLiked event
-    socket.on("blogLiked", (data) => {
-      console.log(
-        `❤️ Blog ID: ${data.blogId} liked by user ID: ${data.userId}`
-      );
-    });
+    socket.on("blogLiked", (data) => {});
 
     // Listen for blogUpdated event
-    socket.on("blogUpdated", (data) => {
-      console.log(`Updated Blog ID: ${data.title}`);
-    });
+    socket.on("blogUpdated", (data) => {});
 
     // Listen for replyAdded event
-    socket.on("replyAdded", (data) => {
-      console.log(
-        `↩️ Reply added to comment ID: ${data.commentId} on blog ID: ${data.blogId}`
-      );
-    });
+    socket.on("replyAdded", (data) => {});
 
     // Listen for commentLiked event
-    socket.on("commentLiked", (data) => {
-      console.log(
-        `👍 Comment ID: ${data.commentId} on blog ID: ${data.blogId} liked by user ID: ${data.userId}`
-      );
-    });
+    socket.on("commentLiked", (data) => {});
 
     // Listen for replyLiked event
-    socket.on("replyLiked", (data) => {
-      console.log(
-        `🔥 Reply at index: ${data.replyIndex} on comment ID: ${data.commentId} liked by user ID: ${data.userId}`
-      );
-    });
+    socket.on("replyLiked", (data) => {});
 
     // Cleanup function
     return () => {

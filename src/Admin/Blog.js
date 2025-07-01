@@ -144,7 +144,6 @@ const BlogEditor = ({}) => {
     data.append("body", formData.body);
     data.append("imagesToKeep", JSON.stringify(mediaToKeep));
     data.append("categories", JSON.stringify(formData.categories));
-    console.log("Fetched categories:", formData.categories);
 
     newMedia.forEach((file) => {
       data.append("files", file);

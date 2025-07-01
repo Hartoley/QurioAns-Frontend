@@ -1,9 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 
 const BlogDetails = ({ blog, formatDate, handleLike, userId }) => {
-  const hasUserLikedBlog = blog.likes?.some(
-    (likeId) => likeId.toString() === userId
+  const [hasLiked, setHasLiked] = useState(
+    blog.likes?.some((likeId) => likeId.toString() === userId)
   );
+  const [likeCount, setLikeCount] = useState(blog.likes?.length || 0);
+
+  const optimisticLike = () => {
+    if (!hasLiked) {
+      setHasLiked(true);
+      setLikeCount((prev) => prev + 1);
+      handleLike(); // use your original function as is
+    }
+  };
 
   return (
     <div className="mt-16 max-w-4xl mx-auto px-6">
@@ -40,20 +49,18 @@ const BlogDetails = ({ blog, formatDate, handleLike, userId }) => {
 
       <div className="flex items-center justify-between mt-6 mb-14">
         <button
-          onClick={handleLike}
-          disabled={hasUserLikedBlog}
+          onClick={optimisticLike}
+          disabled={hasLiked}
           className={`${
-            hasUserLikedBlog
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-red-600 hover:bg-red-700"
+            hasLiked
+              ? "bg-red-200 cursor-not-allowed"
+              : "bg-red-100 hover:bg-red-100"
           } text-white px-4 py-2 rounded-full`}
         >
-          {hasUserLikedBlog ? "❤️" : "🤍"}
+          {hasLiked ? "❤️" : "🤍"}
         </button>
 
-        <p className="text-sm text-gray-600">
-          {blog.likesCount ?? blog.likes?.length ?? 0} Likes
-        </p>
+        <p className="text-sm text-gray-600">{likeCount} Likes</p>
       </div>
     </div>
   );

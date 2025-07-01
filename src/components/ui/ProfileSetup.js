@@ -116,8 +116,6 @@ const ProfileSetup = () => {
     });
     if (avatar) submitData.append("image", avatar);
 
-    console.log("Submitting data:", submitData);
-
     try {
       const res = await axios.put(
         `https://qurioans.onrender.com/qurioans/updateuser/${userId}`,

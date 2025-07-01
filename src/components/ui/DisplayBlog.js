@@ -38,13 +38,9 @@ export default function DisplayBlog({ Home }) {
 
     fetchBlog();
 
-    socket.on("connect", () => {
-      console.log("Socket connected");
-    });
+    socket.on("connect", () => {});
 
-    socket.on("disconnect", () => {
-      console.log("Socket disconnected");
-    });
+    socket.on("disconnect", () => {});
 
     socket.on("commentAdded", (comment) => {
       setBlog((prev) => {
@@ -222,9 +218,7 @@ export default function DisplayBlog({ Home }) {
           timeSpent: secondsSpent,
           clicked: true,
         })
-        .then((res) => {
-          console.log("Activity tracked:", res.data);
-        })
+        .then((res) => {})
         .catch((err) => {
           console.error("Error tracking activity now!!", err);
         });

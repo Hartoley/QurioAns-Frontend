@@ -50,7 +50,7 @@ const SideNav = ({ onTopicClick }) => {
         if (!res.ok) throw new Error("Failed to fetch blogs!");
         const data = await res.json();
         setBlogs(data);
-        console.log(data);
+        // console.log(data);
       } catch (err) {
         setError(err.message);
       } finally {

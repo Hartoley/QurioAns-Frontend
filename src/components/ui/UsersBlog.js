@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import io from "socket.io-client";
 
 const UsersBlog = ({ selectedTopic, onClearTopic, Home }) => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const userId = localStorage.getItem("QurioUser");
+  const socket = io("https://qurioans.onrender.com");
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -33,6 +35,33 @@ const UsersBlog = ({ selectedTopic, onClearTopic, Home }) => {
     };
 
     fetchBlogs();
+    socket.on("connect", () => {
+      // console.log("Socket connected");
+    });
+
+    socket.on("disconnect", () => {
+      // console.log("Socket disconnected");
+    });
+
+    socket.on("commentAdded", (data) => {
+      fetchBlogs();
+    });
+
+    // Listen for blogLiked event
+    socket.on("blogLiked", (data) => {
+      fetchBlogs();
+    });
+
+    socket.on("blogCreated", (newBlog) => {
+      setBlogs((prevBlogs) => [newBlog, ...prevBlogs]);
+    });
+    return () => {
+      socket.off("connect");
+      socket.off("disconnect");
+      socket.off("blogCreated");
+      socket.off("commentLiked");
+      socket.off("commentAdded");
+    };
   }, [selectedTopic]);
 
   return (

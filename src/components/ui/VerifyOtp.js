@@ -22,10 +22,6 @@ const VerifyOtp = () => {
     setError(null);
     setMessage(null);
 
-    console.log("OTP from body:", otp);
-
-    console.log("userId from params:", userId);
-
     try {
       const res = await axios.post(
         `https://qurioans.onrender.com/qurioans/verifyotp/${userId}`,

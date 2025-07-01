@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CreateBlog from "./CreateBlog";
+import io from "socket.io-client";
 
 const AdminDash = () => {
   const { adminId } = useParams();
   const navigate = useNavigate();
+  const socket = io("https://qurioans.onrender.com");
 
   const handleEditClick = (blogId) => {
     navigate(`/blog/${blogId}`);
@@ -28,7 +30,26 @@ const AdminDash = () => {
         setLoading(false);
       }
     };
+
     fetchBlogs();
+
+    socket.on("connect", () => {
+      // console.log("Socket connected");
+    });
+
+    socket.on("disconnect", () => {
+      // console.log("Socket disconnected");
+    });
+
+    socket.on("blogCreated", (newBlog) => {
+      setBlogs((prevBlogs) => [newBlog, ...prevBlogs]);
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("disconnect");
+      socket.off("blogCreated");
+    };
   }, []);
 
   const toggleExpanded = (id) => {
