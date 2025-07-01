@@ -44,12 +44,12 @@ const UsersBlog = ({ selectedTopic, onClearTopic, Home }) => {
     });
 
     socket.on("commentAdded", (data) => {
-      fetchBlogs();
+      // fetchBlogs();
     });
 
     // Listen for blogLiked event
     socket.on("blogLiked", (data) => {
-      fetchBlogs();
+      // fetchBlogs();
     });
 
     socket.on("blogCreated", (newBlog) => {
