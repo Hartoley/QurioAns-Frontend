@@ -8,6 +8,11 @@ import BlogDetails from "./BlogDetails";
 import Comments from "./Comments";
 import Likes from "./Likes";
 import io from "socket.io-client";
+import posthog from "posthog-js";
+
+posthog.init("phc_hVnlf6Jrm6HYV3hwqvsfzPP3xFiiAiTcbqWhPvuyl4G", {
+  api_host: "https://app.posthog.com",
+});
 
 const socket = io("https://qurioans.onrender.com");
 
@@ -192,6 +197,39 @@ export default function DisplayBlog({ Home }) {
       day: "numeric",
     });
   };
+
+  useEffect(() => {
+    const startTime = Date.now();
+
+    return () => {
+      const endTime = Date.now();
+      const secondsSpent = Math.floor((endTime - startTime) / 1000);
+
+      if (!blog || !userId) return;
+
+      // PostHog tracking
+      posthog.capture("blog_view", {
+        blogId: blog._id,
+        userId,
+        time_spent: secondsSpent,
+      });
+
+      // Backend activity tracking
+      axios
+        .post("https://qurioans.onrender.com/qurioans/track-activity", {
+          userId,
+          blogId: blog._id,
+          timeSpent: secondsSpent,
+          clicked: true,
+        })
+        .then((res) => {
+          console.log("Activity tracked:", res.data);
+        })
+        .catch((err) => {
+          console.error("Error tracking activity now!!", err);
+        });
+    };
+  }, [blog]);
 
   if (blog === null) {
     return (

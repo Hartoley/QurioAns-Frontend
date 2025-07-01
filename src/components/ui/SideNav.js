@@ -44,10 +44,13 @@ const SideNav = ({ onTopicClick }) => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const res = await fetch("https://qurioans.onrender.com/blogs");
-        if (!res.ok) throw new Error("Failed to fetch blogs");
+        const res = await fetch(
+          `https://qurioans.onrender.com/qurioans/recommendations/${userId}`
+        );
+        if (!res.ok) throw new Error("Failed to fetch blogs!");
         const data = await res.json();
         setBlogs(data);
+        console.log(data);
       } catch (err) {
         setError(err.message);
       } finally {
