@@ -52,7 +52,8 @@ const LoginBody = ({ showSignup = false }) => {
         formData
       );
       alert(res.data.message);
-      navigate("/verifyotp/:userId");
+      const userId = res.data.userId;
+      navigate(`/verifyotp/${userId}`);
     } catch (error) {
       alert(error?.response?.data?.message || "Signup failed");
     } finally {
