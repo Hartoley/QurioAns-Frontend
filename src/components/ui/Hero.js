@@ -65,7 +65,7 @@ const Hero = () => {
   }
 
   if (error) {
-    return <div className="text-red-500 text-center mt-20">{error}</div>;
+    return <div className="bg-[#0a0a23] text-red-200 text-center"></div>;
   }
 
   return (

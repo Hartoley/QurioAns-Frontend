@@ -52,6 +52,7 @@ const LoginBody = ({ showSignup = false }) => {
         formData
       );
       alert(res.data.message);
+      console.log(res.data);
       const userId = res.data.userId;
       navigate(`/verifyotp/${userId}`);
     } catch (error) {

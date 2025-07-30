@@ -65,7 +65,7 @@ const SideNav = ({ onTopicClick }) => {
       <h2 className="text-lg font-semibold mb-6 text-gray-900">Top Picks</h2>
 
       {loading && <p className="text-gray-500">Loading...</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
+      {/* {error && <p className="text-red-500">Error: {error}</p>} */}
 
       {!loading &&
         !error &&
