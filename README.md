@@ -1,70 +1,96 @@
-# Getting Started with Create React App
+# QurioAns Blog Platform
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+QurioAns is a responsive, user-friendly blogging platform that allows writers to create, edit, and manage blogs, while users can discover, read, like, and comment on content in real-time.
 
-## Available Scripts
+## Live Demo
 
-In the project directory, you can run:
+[https://qurio-ans-frontend.vercel.app](https://qurio-ans-frontend.vercel.app)
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### For Users
+- Register and log in securely
+- Browse all published blog posts
+- Read detailed blog articles
+- Like blog posts
+- Comment and reply on blog posts
+- Responsive layout for all devices
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### For Writers
+- Register and log in as a writer
+- Create new blog posts using a rich text editor
+- Update or delete own blog posts
+- View and manage all authored content
 
-### `npm test`
+### Real-Time Capabilities
+- Instant update of likes and comments using Socket.IO
+- Dynamic content loading and UI feedback via Axios and Redux
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Tech Stack
 
-### `npm run build`
+### Frontend
+- React (Functional Components and Hooks)
+- Redux Toolkit for state management
+- React Router DOM for navigation
+- Tailwind CSS & Bootstrap for responsive UI
+- React Quill for rich text editing
+- Axios for API requests
+- Formik & Yup for form management and validation
+- React Toastify for user notifications
+- Socket.IO Client for real-time interaction
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Additional Tools & Libraries
+- Firebase (for authentication or optional backend services)
+- HeroIcons, FontAwesome, Lucide for consistent iconography
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Getting Started
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Prerequisites
+- Node.js (v14 or higher)
+- npm or yarn
+- Firebase project (if Firebase is used for auth or storage)
 
-### `npm run eject`
+### Installation
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Clone the repository:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+git clone https://github.com/Hartoley/QurioAns-Frontend.git
+cd qurioans-frontend
+````
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Install the dependencies:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm install
+```
 
-## Learn More
+Start the development server:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+npm start
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+The app will be available at `http://localhost:3000`.
 
-### Code Splitting
+## Folder Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
+src/
+├── components/        # Shared components (Navbar, Footer, etc.)
+├── pages/             # Page components (Login, BlogList, Dashboard, etc.)
+├── redux/             # Redux slices and store setup
+├── assets/            # Static files and images
+├── App.js             # Route definitions and layout wrapper
+├── index.js           # Entry point
+```
 
-### Analyzing the Bundle Size
+## License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+This project is licensed under the MIT License.
 
-### Making a Progressive Web App
+## Author
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Jimoh Sekinat Tolani (Keena)
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```
